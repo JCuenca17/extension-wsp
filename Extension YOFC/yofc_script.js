@@ -38,7 +38,7 @@
 let panelAbierto = false;
 const sys = {
     active: false,
-    queue: new Map(),
+    queue: new Map(), // memoria real
     rootId: localStorage.getItem('yofc_root_id') || '',
     scriptUrl: localStorage.getItem('yofc_script_url') || ''
 };
@@ -54,6 +54,8 @@ function cerrarSistema() {
     detenerSeleccion();
     document.querySelectorAll('.yofc-panel').forEach(e => e.remove());
     document.querySelectorAll('.yofc-tag').forEach(e => e.remove());
+    // No borramos sys.queue aqui para no perder datos si se cierra el panel por error
+    // Solo limpiamos marcas visuales
     document.querySelectorAll('img').forEach(img => { img.style.outline = 'none'; delete img.dataset.procesado; });
     panelAbierto = false;
 }
@@ -99,6 +101,7 @@ function iniciarSistema() {
     ui.onclick = e => e.stopPropagation();
 
     const renderMain = () => {
+        // Recalcular stats reales desde memoria
         const cadsUnicos = new Set();
         sys.queue.forEach(v => cadsUnicos.add(v.autor));
 
@@ -111,7 +114,7 @@ function iniciarSistema() {
                 <span id="btnConfig" style="cursor:pointer; font-size:10px; border:1px solid #fff; padding:3px 6px;">CONFIG</span>
             </div>
             <div style="${css.body}">
-                <div style="${css.row}"><span>FOTOS</span><span id="yc" style="${css.val}">${sys.queue.size}</span></div>
+                <div style="${css.row}"><span>FOTOS EN COLA</span><span id="yc" style="${css.val}">${sys.queue.size}</span></div>
                 <div style="${css.row}"><span>CADs</span><span id="ya" style="${css.val}">${cadsUnicos.size}</span></div>
                 
                 <button id="ym" style="${css.btn}">[1] SELECCIONAR</button>
@@ -119,6 +122,13 @@ function iniciarSistema() {
                 <div id="yst" style="color:${configOk ? '#888' : '#ff5252'}; font-size:10px; text-align:center; margin-top:5px;">${statusText}</div>
             </div>`;
         bindEvents();
+
+        // Activar boton subir si ya habia cosas en memoria
+        if (sys.queue.size > 0) {
+            const btnS = ui.querySelector('#ys');
+            btnS.disabled = false;
+            btnS.style.cssText = css.btn + css.btnSend;
+        }
     };
 
     const renderConfig = () => {
@@ -187,27 +197,31 @@ function iniciarSistema() {
             e.preventDefault();
             e.stopPropagation();
 
-            // --- CAMBIO CLAVE V63 ---
-            // YA NO LLAMAMOS A detenerSeleccion() AQUI.
-            // EL MODO SIGUE ACTIVO PARA QUE HAGAS CLIC EN OTRO.
-            // ------------------------
-
             const txt = e.target.innerText;
             if (!txt || !txt.trim()) return;
             const auth = txt.split('\n')[0].trim();
+
+            // ESCANEO CON LOGICA NUEVA
             const found = scan(e.target, auth);
 
-            // Feedback visual rápido de que se hizo clic (parpadeo del borde)
+            // Efecto visual
             const target = e.target;
             target.style.outline = "2px solid #ffd600";
             setTimeout(() => { if (sys.active) target.style.outline = "1px dashed #ffd600"; }, 200);
 
+            // Actualizar contadores
             const cadsUnicos = new Set();
             sys.queue.forEach(v => cadsUnicos.add(v.autor));
             els.c.innerText = sys.queue.size; els.a.innerText = cadsUnicos.size;
+
             if (sys.queue.size > 0) { els.s.disabled = false; els.s.style.cssText = css.btn + css.btnSend; }
 
-            if (found) { els.st.innerText = `Agregado: ${auth} (+${found})`; }
+            // Mensaje inteligente: Diferencia entre "Nuevos" y "Ya estaban"
+            if (found > 0) {
+                els.st.innerText = `Agregado: ${auth} (+${found} nuevas)`;
+            } else {
+                els.st.innerText = `${auth}: Fotos ya estaban en cola.`;
+            }
         }
 
         window.hover = hoverFn;
@@ -216,7 +230,7 @@ function iniciarSistema() {
         els.s.onclick = () => {
             if (!sys.scriptUrl || !sys.rootId) return alert("Falta configuracion.");
 
-            detenerSeleccion(); // AQUI SI LIMPIAMOS TODO AL SUBIR
+            detenerSeleccion();
             els.s.innerText = "SUBIENDO..."; els.s.disabled = true; els.s.style.background = "#333";
             els.st.innerText = "Conectando...";
 
@@ -252,7 +266,15 @@ function iniciarSistema() {
         while (s && row && safe < 50) {
             safe++;
             row.querySelectorAll('img[src^="blob:"]').forEach(img => {
-                if (img.naturalWidth > 200 && !img.dataset.procesado) { mark(img, auth); add++; }
+                if (img.naturalWidth > 200 && !sys.queue.has(img.src)) {
+                    mark(img, auth);
+                    add++;
+                } else if (img.naturalWidth > 200 && sys.queue.has(img.src)) {
+                    if (!img.dataset.procesado) {
+                        img.style.outline = "4px solid #263238";
+                        img.dataset.procesado = "1";
+                    }
+                }
             });
             const next = row.nextElementSibling;
             if (!next) break;
