@@ -1,6 +1,5 @@
 # YOFC CLOUD MANAGER - SISTEMA DE GESTIÓN DE EVIDENCIAS
 
-**Versión:** V65 (Enterprise Edition)
 **Desarrollado por:** Jose Luis Cuenca Gutierrez
 **Departamento:** Ingeniería de Sistemas / Operaciones
 **Fecha de Actualización:** Febrero 2026
