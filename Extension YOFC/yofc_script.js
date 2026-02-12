@@ -1,7 +1,6 @@
 /**
  * ============================================================================
  * PROYECTO: YOFC CLOUD MANAGER - EXTENSIÓN DE NAVEGADOR (CLIENTE)
- * VERSIÓN: V61 (Architecture On-Demand)
  * * DESARROLLADO POR: JOSE LUIS CUENCA GUTIERREZ
  * ÁREA: Ingeniería de Sistemas / Operaciones
  * FECHA: Febrero 2026
@@ -13,7 +12,7 @@
  * optimizar recursos del navegador (Zero-Overhead cuando está inactivo).
  * 2. Motor de Scraping DOM: Algoritmo de extracción de blobs de imágenes 
  * y metadatos de autoría en tiempo real directamente del renderizado web.
- * 3. Interfaz V61 (Dark Mode): Panel de control inyectado dinámicamente 
+ * 3. Interfaz (Dark Mode): Panel de control inyectado dinámicamente 
  * con soporte para configuración multi-usuario y feedback visual de estado.
  * ============================================================================
  */
@@ -38,7 +37,8 @@
 let panelAbierto = false;
 const sys = {
     active: false,
-    queue: new Map(), // memoria real
+    queue: new Map(),    // Lo que vas a subir AHORA (se borra al cerrar)
+    history: new Set(),  // Lo que YA subiste (NO se borra al cerrar)
     rootId: localStorage.getItem('yofc_root_id') || '',
     scriptUrl: localStorage.getItem('yofc_script_url') || ''
 };
@@ -51,12 +51,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 function cerrarSistema() {
+    // Al cerrar, limpiamos la selección visual y la COLA actual
     detenerSeleccion();
     document.querySelectorAll('.yofc-panel').forEach(e => e.remove());
     document.querySelectorAll('.yofc-tag').forEach(e => e.remove());
-    // No borramos sys.queue aqui para no perder datos si se cierra el panel por error
-    // Solo limpiamos marcas visuales
     document.querySelectorAll('img').forEach(img => { img.style.outline = 'none'; delete img.dataset.procesado; });
+
+    // IMPORTANTE: Borramos la cola actual para que al abrir empiece en 0
+    sys.queue.clear();
+    // PERO NO borramos sys.history (eso se queda guardado en memoria)
+
     panelAbierto = false;
 }
 
@@ -101,7 +105,6 @@ function iniciarSistema() {
     ui.onclick = e => e.stopPropagation();
 
     const renderMain = () => {
-        // Recalcular stats reales desde memoria
         const cadsUnicos = new Set();
         sys.queue.forEach(v => cadsUnicos.add(v.autor));
 
@@ -122,13 +125,6 @@ function iniciarSistema() {
                 <div id="yst" style="color:${configOk ? '#888' : '#ff5252'}; font-size:10px; text-align:center; margin-top:5px;">${statusText}</div>
             </div>`;
         bindEvents();
-
-        // Activar boton subir si ya habia cosas en memoria
-        if (sys.queue.size > 0) {
-            const btnS = ui.querySelector('#ys');
-            btnS.disabled = false;
-            btnS.style.cssText = css.btn + css.btnSend;
-        }
     };
 
     const renderConfig = () => {
@@ -201,26 +197,22 @@ function iniciarSistema() {
             if (!txt || !txt.trim()) return;
             const auth = txt.split('\n')[0].trim();
 
-            // ESCANEO CON LOGICA NUEVA
             const found = scan(e.target, auth);
 
-            // Efecto visual
             const target = e.target;
             target.style.outline = "2px solid #ffd600";
             setTimeout(() => { if (sys.active) target.style.outline = "1px dashed #ffd600"; }, 200);
 
-            // Actualizar contadores
             const cadsUnicos = new Set();
             sys.queue.forEach(v => cadsUnicos.add(v.autor));
             els.c.innerText = sys.queue.size; els.a.innerText = cadsUnicos.size;
 
             if (sys.queue.size > 0) { els.s.disabled = false; els.s.style.cssText = css.btn + css.btnSend; }
 
-            // Mensaje inteligente: Diferencia entre "Nuevos" y "Ya estaban"
             if (found > 0) {
                 els.st.innerText = `Agregado: ${auth} (+${found} nuevas)`;
             } else {
-                els.st.innerText = `${auth}: Fotos ya estaban en cola.`;
+                els.st.innerText = `Todas las fotos de ${auth} ya estaban subidas o en cola.`;
             }
         }
 
@@ -243,13 +235,18 @@ function iniciarSistema() {
                         if (l.includes("[OMITIDO]")) omitidos++;
                         if (l.includes("[OK]")) subidos++;
                     });
+
+                    sys.queue.forEach((val, key) => {
+                        sys.history.add(key); // Guardamos la URL/Src para no volver a subirla NUNCA en esta sesión
+                    });
+
                     els.s.innerText = "COMPLETADO";
                     els.st.innerText = `Subidos: ${subidos} | Duplicados: ${omitidos}`;
                     setTimeout(() => {
-                        sys.queue.clear();
+                        sys.queue.clear(); // Limpiamos la cola actual
                         document.querySelectorAll('.yofc-tag').forEach(t => t.remove());
                         document.querySelectorAll('img').forEach(i => { i.style.outline = 'none'; delete i.dataset.procesado; });
-                        renderMain();
+                        renderMain(); // Volvemos a cero en pantalla, PERO sys.history RECUERDA TODO
                     }, 2500);
                 } else {
                     els.s.innerText = "ERROR";
@@ -266,10 +263,10 @@ function iniciarSistema() {
         while (s && row && safe < 50) {
             safe++;
             row.querySelectorAll('img[src^="blob:"]').forEach(img => {
-                if (img.naturalWidth > 200 && !sys.queue.has(img.src)) {
+                if (img.naturalWidth > 200 && !sys.history.has(img.src) && !sys.queue.has(img.src)) {
                     mark(img, auth);
                     add++;
-                } else if (img.naturalWidth > 200 && sys.queue.has(img.src)) {
+                } else if (sys.queue.has(img.src)) {
                     if (!img.dataset.procesado) {
                         img.style.outline = "4px solid #263238";
                         img.dataset.procesado = "1";
