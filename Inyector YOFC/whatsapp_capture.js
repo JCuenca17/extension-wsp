@@ -1,7 +1,7 @@
 /**
  * ============================================================================
  * PROYECTO: YOFC INJECTOR - MÓDULO DE EXTRACCIÓN (ORIGEN)
- * VERSIÓN: V70 (Interfaz Profesional)
+ * VERSIÓN: V71 (Trazabilidad Granular e Interfaz Profesional)
  * * DESARROLLADO POR: JOSE LUIS CUENCA GUTIERREZ
  * ============================================================================
  * © 2026 Jose Luis Cuenca Gutierrez - Todos los derechos reservados.
@@ -85,7 +85,7 @@ function iniciarSistema() {
                 <div style="${css.row}"><span>DATOS EN MEMORIA</span><span id="yc" style="${css.val}">${sys.queue.size}</span></div>
                 <button id="ym" style="${css.btn}">[1] SELECCIONAR ORIGEN</button>
                 <button id="ys" style="${css.btn}" disabled>[2] EXTRAER A CACHÉ</button>
-                <div id="yst" style="color:#666; font-size:10px; text-align:center; margin-top:5px;">A la espera de selección.</div>
+                <div id="yst" style="color:#666; font-size:10px; text-align:center; margin-top:5px; padding: 4px; border-radius: 2px;">A la espera de selección.</div>
             </div>`;
     bindEvents();
   };
@@ -150,8 +150,16 @@ function iniciarSistema() {
         els.s.style.cssText = css.btn + css.btnSend;
       }
 
-      if (found > 0) els.st.innerText = `Registros añadidos: ${auth}`;
-      else els.st.innerText = `Datos redundantes ignorados.`;
+      // MODIFICACIÓN DE TRAZABILIDAD: Desglose por origen
+      if (found > 0) {
+        els.st.innerText = `[+${found}] Registros capturados: ${auth}`;
+        els.st.style.color = "#4fc3f7"; // Color de éxito
+        els.st.style.background = "#1a3a47";
+      } else {
+        els.st.innerText = `Datos redundantes ignorados.`;
+        els.st.style.color = "#ef5350"; // Color de alerta
+        els.st.style.background = "#401c1c";
+      }
     };
 
     els.s.onclick = () => {
@@ -167,6 +175,8 @@ function iniciarSistema() {
         els.s.innerText = "EXTRACCIÓN EXITOSA";
         els.s.style.background = "#2e7d32";
         els.st.innerText = `Proceda a la plataforma destino para inyección.`;
+        els.st.style.color = "#4caf50";
+        els.st.style.background = "transparent";
 
         setTimeout(() => {
           sys.queue.clear();
