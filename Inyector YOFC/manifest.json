@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "YOFC Bridge Injector",
+  "version": "1.0",
+  "description": "Puente de transferencia de evidencias: WhatsApp -> Plataforma YOFC.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://web.whatsapp.com/*",
+    "*://fms.yofc.com.pe/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": ["whatsapp_capture.js"]
+    },
+    {
+      "matches": ["*://fms.yofc.com.pe/*"],
+      "js": ["platform_injector.js"]
+    }
+  ]
+}
