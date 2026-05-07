@@ -1,7 +1,7 @@
 /**
  * ============================================================================
- * PROYECTO: YOFC INJECTOR - MÓDULO DE PLATAFORMA (INYECCIÓN PRECISA)
- * VERSIÓN: V70 (Precisión por ID de DOM + Modales Custom)
+ * PROYECTO: YOFC INJECTOR - MÓDULO DE PLATAFORMA (SIDEBAR RETRÁCTIL)
+ * VERSIÓN: V75 (Panel Colapsable y Control Unitario)
  * * DESARROLLADO POR: JOSE LUIS CUENCA GUTIERREZ
  * ============================================================================
  * © 2026 Jose Luis Cuenca Gutierrez - Todos los derechos reservados.
@@ -9,175 +9,197 @@
  */
 
 if (window.location.href.includes("fms.yofc.com.pe")) {
-  console.log("YOFC Injector: Monitor de entorno de trabajo iniciado.");
+  console.log("YOFC Injector: Modo Sidebar Retráctil activado.");
 
-  // Función para crear modales profesionales reemplazando alert()
-  function mostrarModalCustom(titulo, mensaje, esError = false) {
-    const idModal = "yofc-custom-modal";
-    const existente = document.getElementById(idModal);
-    if (existente) existente.remove();
+  const SIDEBAR_WIDTH = 320;
+  let isSidebarOpen = true; // Estado inicial del panel
 
-    const overlay = document.createElement("div");
-    overlay.id = idModal;
-    overlay.style.cssText =
-      "position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:9999999; display:flex; justify-content:center; align-items:center; backdrop-filter:blur(2px); font-family:Consolas, monospace;";
+  function inicializarEntorno() {
+    if (document.getElementById("yofc-sidebar")) return;
 
-    const caja = document.createElement("div");
-    caja.style.cssText = `background:#1a1a1a; border:1px solid ${esError ? "#ef5350" : "#4fc3f7"}; border-radius:4px; padding:25px; width:450px; max-width:90%; color:#e0e0e0; box-shadow:0 15px 35px rgba(0,0,0,0.6);`;
+    // 1. Configuración del body
+    document.body.style.marginRight = `${SIDEBAR_WIDTH}px`;
+    document.body.style.transition = "margin-right 0.3s ease, width 0.3s ease";
+    document.body.style.width = `calc(100% - ${SIDEBAR_WIDTH}px)`;
+    document.body.style.overflowX = "hidden"; // Evitar scrollbars indeseados
 
-    const tituloEl = document.createElement("h3");
-    tituloEl.innerText = titulo;
-    tituloEl.style.cssText = `color:${esError ? "#ef5350" : "#4fc3f7"}; margin:0 0 15px 0; border-bottom:1px solid #333; padding-bottom:10px; font-size:16px; letter-spacing:1px;`;
+    // 2. Creación del Contenedor Principal (Sidebar)
+    const sidebar = document.createElement("div");
+    sidebar.id = "yofc-sidebar";
+    sidebar.style.cssText = `
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: ${SIDEBAR_WIDTH}px;
+            height: 100vh;
+            background: #121212;
+            border-left: 1px solid #333;
+            z-index: 999999;
+            color: #e0e0e0;
+            font-family: Consolas, monospace;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            transition: right 0.3s ease;
+        `;
 
-    const msjEl = document.createElement("p");
-    msjEl.innerText = mensaje;
-    msjEl.style.cssText =
-      "font-size:13px; line-height:1.6; white-space:pre-wrap; margin-bottom:20px; color:#ccc;";
+    // 3. Creación de la Pestaña Retráctil (Toggle Button)
+    const toggleBtn = document.createElement("div");
+    toggleBtn.id = "yofc-toggle-btn";
+    toggleBtn.innerHTML = "▶"; // Icono de flecha
+    toggleBtn.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: -30px;
+            width: 30px;
+            height: 60px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-right: none;
+            border-radius: 6px 0 0 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4fc3f7;
+            font-size: 14px;
+            box-shadow: -3px 0 8px rgba(0,0,0,0.4);
+            transform: translateY(-50%);
+            transition: background 0.2s;
+        `;
 
-    const btn = document.createElement("button");
-    btn.innerText = "ENTENDIDO";
-    btn.style.cssText = `width:100%; padding:12px; background:${esError ? "#c62828" : "#0277bd"}; color:#fff; border:none; border-radius:2px; cursor:pointer; font-weight:bold; letter-spacing:1px; transition:0.2s;`;
-    btn.onmouseover = () => (btn.style.opacity = "0.8");
-    btn.onmouseout = () => (btn.style.opacity = "1");
-    btn.onclick = () => overlay.remove();
+    toggleBtn.onmouseover = () => (toggleBtn.style.background = "#222");
+    toggleBtn.onmouseout = () => (toggleBtn.style.background = "#1a1a1a");
 
-    caja.appendChild(tituloEl);
-    caja.appendChild(msjEl);
-    caja.appendChild(btn);
-    overlay.appendChild(caja);
-    document.body.appendChild(overlay);
+    // Lógica de apertura y cierre
+    toggleBtn.onclick = () => {
+      isSidebarOpen = !isSidebarOpen;
+      if (isSidebarOpen) {
+        sidebar.style.right = "0px";
+        document.body.style.marginRight = `${SIDEBAR_WIDTH}px`;
+        document.body.style.width = `calc(100% - ${SIDEBAR_WIDTH}px)`;
+        toggleBtn.innerHTML = "▶";
+      } else {
+        sidebar.style.right = `-${SIDEBAR_WIDTH}px`;
+        document.body.style.marginRight = "0px";
+        document.body.style.width = "100%";
+        toggleBtn.innerHTML = "◀";
+      }
+    };
+
+    // Estructura interna del panel
+    sidebar.innerHTML += `
+            <div style="background:#1a1a1a; padding:20px; border-bottom:1px solid #333; text-align:center;">
+                <h2 style="margin:0; font-size:14px; letter-spacing:2px; color:#4fc3f7;">YOFC INJECTOR</h2>
+                <div style="font-size:10px; color:#666; margin-top:5px;">CONTROL DE FLUJO V75</div>
+            </div>
+            <div id="yofc-stats" style="padding:20px; flex-grow:1; overflow-y:auto;">
+                <div style="color:#666; font-size:11px; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px;">Caché en memoria</div>
+                <div id="yofc-cache-list"></div>
+            </div>
+            <div id="yofc-actions" style="padding:20px; border-top:1px solid #333; background:#1a1a1a;">
+                <div id="yofc-context-info" style="font-size:11px; margin-bottom:15px; color:#aaa; line-height:1.4;"></div>
+                <button id="btn-inject-unit" style="display:none; width:100%; padding:15px; background:#0277bd; color:#fff; border:none; border-radius:2px; cursor:pointer; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">
+                    Inyectar Siguiente
+                </button>
+            </div>
+        `;
+
+    sidebar.appendChild(toggleBtn);
+    document.body.appendChild(sidebar);
+    actualizarInterfaz();
   }
 
-  function mantenerBotonVivo() {
-    if (document.getElementById("btn-yofc-injector")) return;
+  async function actualizarInterfaz() {
+    const data = await chrome.storage.local.get("yofc_bridge_data");
+    const fotos = data.yofc_bridge_data || [];
+    const container = document.getElementById("yofc-cache-list");
+    const contextInfo = document.getElementById("yofc-context-info");
+    const btn = document.getElementById("btn-inject-unit");
 
-    const btnInyectar = document.createElement("button");
-    btnInyectar.id = "btn-yofc-injector";
-    btnInyectar.innerText = "[ INYECTAR DATOS DE CACHÉ ]";
-    btnInyectar.style.cssText =
-      "position:fixed; bottom:30px; right:30px; z-index:999999; padding:15px 25px; background:#121212; color:#4fc3f7; border:1px solid #4fc3f7; border-radius:4px; cursor:pointer; font-weight:bold; font-family:Consolas, monospace; font-size:13px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: 0.3s; letter-spacing:1px;";
+    if (!container) return;
 
-    btnInyectar.onmouseover = () => {
-      btnInyectar.style.background = "#4fc3f7";
-      btnInyectar.style.color = "#000";
-    };
-    btnInyectar.onmouseout = () => {
-      btnInyectar.style.background = "#121212";
-      btnInyectar.style.color = "#4fc3f7";
-    };
+    container.innerHTML = "";
 
-    document.body.appendChild(btnInyectar);
+    if (fotos.length === 0) {
+      container.innerHTML =
+        "<div style='color:#444; font-style:italic; font-size:12px;'>Memoria de caché vacía.</div>";
+      btn.style.display = "none";
+      contextInfo.innerText = "A la espera de datos desde el origen.";
+      return;
+    }
 
-    btnInyectar.onclick = async () => {
-      const data = await chrome.storage.local.get("yofc_bridge_data");
-      const fotos = data.yofc_bridge_data;
+    const conteo = {};
+    fotos.forEach((f) => {
+      const name = f.autor.split("\n")[0].trim();
+      conteo[name] = (conteo[name] || 0) + 1;
+    });
 
-      if (!fotos || fotos.length === 0) {
-        mostrarModalCustom(
-          "CACHÉ VACÍA",
-          "No existen datos preparados en memoria.\nRequiere ejecutar la extracción desde el origen (WhatsApp).",
-          true,
-        );
-        return;
-      }
+    for (const [cad, cant] of Object.entries(conteo)) {
+      const item = document.createElement("div");
+      item.style.cssText =
+        "display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #222; font-size:12px;";
+      item.innerHTML = `<span>${cad}</span><span style="color:#4fc3f7; font-weight:bold;">[ ${cant} ]</span>`;
+      container.appendChild(item);
+    }
 
-      // BÚSQUEDA PRECISA (O(1)) POR ID EXACTO DEL DOM
-      const tituloElemento = document.getElementById("ops-detalle-titulo");
+    const tituloEl = document.getElementById("ops-detalle-titulo");
+    const cadActual = tituloEl ? tituloEl.innerText.trim() : null;
 
-      if (!tituloElemento) {
-        mostrarModalCustom(
-          "ERROR DE CONTEXTO",
-          "El sistema no detecta el contenedor 'ops-detalle-titulo'.\nVerifique que se encuentra en la vista de detalle de un CAD activo.",
-          true,
-        );
-        return;
-      }
-
-      const cadActual = tituloElemento.innerText.trim();
-
-      const fotosParaPegar = fotos.filter(
-        (f) => f.autor.split("\n")[0].trim() === cadActual,
-      );
-      const fotosRestantes = fotos.filter(
-        (f) => f.autor.split("\n")[0].trim() !== cadActual,
-      );
-
-      if (fotosParaPegar.length === 0) {
-        const cadsEnMemoria = [
-          ...new Set(fotos.map((f) => f.autor.split("\n")[0].trim())),
-        ].join("\n- ");
-        mostrarModalCustom(
-          "FALTA DE CORRESPONDENCIA",
-          `El CAD activo en pantalla es:\n[ ${cadActual} ]\n\nNo obstante, la memoria solo contiene registros de:\n- ${cadsEnMemoria}`,
-          true,
-        );
-        return;
-      }
-
-      const inputFiles = document.getElementById("o-ap-fotos-input");
-
-      if (!inputFiles) {
-        mostrarModalCustom(
-          "ERROR DE INTERFAZ",
-          "No se localizó el componente de carga (Input DOM). Asegúrese de haber desplegado la pestaña 'Registro de Apertura'.",
-          true,
-        );
-        return;
-      }
-
-      // Inicio de inyección
-      btnInyectar.innerText = `[ PROCESANDO ${fotosParaPegar.length} REGISTROS... ]`;
-      btnInyectar.style.background = "#f57c00";
-      btnInyectar.style.color = "#000";
-      btnInyectar.style.borderColor = "#f57c00";
-
-      try {
-        const dataTransfer = new DataTransfer();
-
-        for (let i = 0; i < fotosParaPegar.length; i++) {
-          const res = await fetch(fotosParaPegar[i].imagen);
-          const blob = await res.blob();
-          const file = new File([blob], `evidencia_${cadActual}_${i + 1}.jpg`, {
-            type: "image/jpeg",
-          });
-          dataTransfer.items.add(file);
-        }
-
-        inputFiles.files = dataTransfer.files;
-
-        const event = new Event("change", { bubbles: true });
-        inputFiles.dispatchEvent(event);
-
-        // Limpieza y actualización de memoria
-        if (fotosRestantes.length > 0) {
-          await chrome.storage.local.set({ yofc_bridge_data: fotosRestantes });
-          btnInyectar.innerText = `[ ÉXITO: QUEDAN ${fotosRestantes.length} EN CACHÉ ]`;
-        } else {
-          await chrome.storage.local.remove("yofc_bridge_data");
-          btnInyectar.innerText = `[ INYECCIÓN COMPLETADA ]`;
-        }
-
-        btnInyectar.style.background = "#2e7d32";
-        btnInyectar.style.borderColor = "#2e7d32";
-
-        setTimeout(() => {
-          btnInyectar.innerText = "[ INYECTAR DATOS DE CACHÉ ]";
-          btnInyectar.style.background = "#121212";
-          btnInyectar.style.color = "#4fc3f7";
-          btnInyectar.style.borderColor = "#4fc3f7";
-        }, 3500);
-      } catch (error) {
-        console.error("YOFC Injector Error: ", error);
-        mostrarModalCustom(
-          "ERROR DE EJECUCIÓN",
-          "Ocurrió una falla crítica durante la construcción de los objetos Blob. Revise la consola del navegador.",
-          true,
-        );
-        btnInyectar.innerText = "[ INYECTAR DATOS DE CACHÉ ]";
-      }
-    };
+    if (cadActual && conteo[cadActual]) {
+      contextInfo.innerHTML = `Entorno identificado:<br><b style="color:#fff;">${cadActual}</b><br><br>Registros pendientes: ${conteo[cadActual]}`;
+      btn.style.display = "block";
+      btn.onclick = () => ejecutarInyeccionUnitaria(cadActual);
+    } else {
+      contextInfo.innerHTML = cadActual
+        ? `<span style="color:#ef5350;">El CAD [${cadActual}] no posee registros en la caché actual.</span>`
+        : "Navegue a un CAD activo para habilitar la inyección.";
+      btn.style.display = "none";
+    }
   }
 
-  setInterval(mantenerBotonVivo, 1500);
-  mantenerBotonVivo();
+  async function ejecutarInyeccionUnitaria(cadActual) {
+    const data = await chrome.storage.local.get("yofc_bridge_data");
+    let fotos = data.yofc_bridge_data || [];
+
+    const index = fotos.findIndex(
+      (f) => f.autor.split("\n")[0].trim() === cadActual,
+    );
+    if (index === -1) return;
+
+    const registroActual = fotos[index];
+    const inputFiles = document.getElementById("o-ap-fotos-input");
+
+    if (!inputFiles) {
+      console.error("Error: Input DOM 'o-ap-fotos-input' no localizado.");
+      return;
+    }
+
+    try {
+      const res = await fetch(registroActual.imagen);
+      const blob = await res.blob();
+      const file = new File([blob], `evidencia_${cadActual}.jpg`, {
+        type: "image/jpeg",
+      });
+
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      inputFiles.files = dataTransfer.files;
+
+      const event = new Event("change", { bubbles: true });
+      inputFiles.dispatchEvent(event);
+
+      fotos.splice(index, 1);
+      await chrome.storage.local.set({ yofc_bridge_data: fotos });
+
+      actualizarInterfaz();
+    } catch (e) {
+      console.error("Falla en el proceso de inyección unitaria:", e);
+    }
+  }
+
+  setInterval(() => {
+    inicializarEntorno();
+    actualizarInterfaz();
+  }, 1500);
 }
