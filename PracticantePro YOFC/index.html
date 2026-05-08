@@ -1,0 +1,3626 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coordinador — YOFC CAD</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
+
+    <link rel="stylesheet" crossorigin href="/cad/assets/styles-NEx4HSGN.css" />
+  </head>
+  <body>
+    <!-- ━━━ SIDEBAR ━━━ -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <img
+          src="/cad/assets/YOFC__1___1_-CBlTVkHT.png"
+          alt="YOFC Smart Link Better Life"
+          style="width: 96%; display: block; margin: 0 auto"
+        />
+      </div>
+      <div class="color-indicator">
+        <div class="color-dot active" id="dot0"></div>
+        <div class="color-dot" id="dot1"></div>
+        <div class="color-dot" id="dot2"></div>
+        <div class="color-dot" id="dot3"></div>
+        <div class="color-dot" id="dot4"></div>
+      </div>
+      <div class="sidebar-region" id="sidebar-region-box">
+        <div class="region-dot"></div>
+        <span class="region-name" id="sidebar-region">Cargando...</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-sep">General</div>
+        <a class="nav-item activo" onclick="cambiarSeccion('dashboard')">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-item" onclick="cambiarSeccion('informacion')">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+            />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>
+          <span>Información</span>
+        </a>
+        <div class="nav-sep">Gestión</div>
+        <a class="nav-item" onclick="cambiarSeccion('operacion')">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+            />
+          </svg>
+          <span>Operación</span>
+        </a>
+        <a class="nav-item" onclick="cambiarSeccion('asistentes')">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span>Asistentes</span>
+        </a>
+        <div class="nav-sep" id="sep-reportes" style="display: none">
+          Reportes
+        </div>
+        <a
+          class="nav-item"
+          onclick="cambiarSeccion('reportes')"
+          id="nav-reportes"
+          style="display: none"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg>
+          <span>Reportes</span>
+        </a>
+      </nav>
+      <div class="sidebar-user">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="user-name">Cargando...</div>
+          <div class="user-role">Coordinador</div>
+        </div>
+        <button
+          class="btn-logout"
+          onclick="cerrarSesion()"
+          title="Cerrar sesión"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ━━━ MAIN ━━━ -->
+    <div class="main-content">
+      <div class="topbar">
+        <div class="topbar-titulo" id="topbar-titulo">📋 Bienvenido</div>
+        <div class="topbar-datetime">
+          <div class="topbar-fecha" id="topbar-fecha">...</div>
+          <div class="topbar-hora" id="topbar-hora">--:--:--</div>
+        </div>
+      </div>
+
+      <div class="content-area">
+        <!-- ═══ DASHBOARD ═══ -->
+        <section class="seccion activa" id="seccion-dashboard">
+          <!-- ═══ FILA 1: KPIs del Mes ═══ -->
+          <div class="kpi-row-label">Indicadores del Mes</div>
+          <div class="grid-kpis">
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background: rgba(0, 156, 222, 0.12)">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#009CDE"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  style="width: 22px; height: 22px"
+                >
+                  <rect x="3" y="3" width="7" height="7" rx="1" />
+                  <rect x="14" y="3" width="7" height="7" rx="1" />
+                  <rect x="3" y="14" width="7" height="7" rx="1" />
+                  <rect x="14" y="14" width="7" height="7" rx="1" />
+                </svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-valor" id="kpi-total">—</div>
+                <div class="kpi-label">Total CADs</div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div
+                class="kpi-icon"
+                style="background: rgba(165, 200, 75, 0.15)"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#6a8a2a"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  style="width: 22px; height: 22px"
+                >
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-valor" id="kpi-operativos">—</div>
+                <div class="kpi-label">Operational CADs</div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div
+                class="kpi-icon"
+                style="background: rgba(255, 185, 50, 0.15)"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#b38600"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  style="width: 22px; height: 22px"
+                >
+                  <line x1="12" y1="20" x2="12" y2="10" />
+                  <line x1="18" y1="20" x2="18" y2="4" />
+                  <line x1="6" y1="20" x2="6" y2="16" />
+                </svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-valor" id="kpi-rate">—</div>
+                <div class="kpi-label">Operation Rate</div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background: rgba(206, 15, 105, 0.1)">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#CE0F69"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  style="width: 22px; height: 22px"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-valor" id="kpi-cerrados-mes">—</div>
+                <div class="kpi-label">Total CAD Closed</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ FILA 2: Indicadores del Día ═══ -->
+          <div class="kpi-row-label" style="margin-top: 18px">
+            Indicadores del Día
+          </div>
+          <div class="grid-kpis">
+            <div class="kpi-card">
+              <div
+                class="kpi-icon"
+                style="background: rgba(165, 200, 75, 0.15)"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#6a8a2a"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  style="width: 22px; height: 22px"
+                >
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-valor" id="kpi-abiertos-hoy">—</div>
+                <div class="kpi-label">CADs Abiertos Hoy</div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background: rgba(206, 15, 105, 0.1)">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#CE0F69"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  style="width: 22px; height: 22px"
+                >
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-valor" id="kpi-cerrados-hoy">—</div>
+                <div class="kpi-label">CADs Cerrados Hoy</div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon" style="background: rgba(0, 156, 222, 0.12)">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#009CDE"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  style="width: 22px; height: 22px"
+                >
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-valor" id="kpi-asist-hoy">—</div>
+                <div class="kpi-label">Asistentes Hoy</div>
+              </div>
+            </div>
+            <div class="kpi-card">
+              <div
+                class="kpi-icon"
+                style="background: rgba(255, 185, 50, 0.15)"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#b38600"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  style="width: 22px; height: 22px"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+              <div class="kpi-data">
+                <div class="kpi-valor" id="kpi-asist-abierta">—</div>
+                <div class="kpi-label">Asistentes en Atención</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="placeholder-card">
+            <div class="placeholder-icon">📊</div>
+            <div class="placeholder-title">Dashboard del Coordinador</div>
+            <div class="placeholder-text">
+              Datos de la región cargados. Más gráficos próximamente.
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══ INFORMACIÓN ═══ -->
+        <!-- ═══ INFORMACIÓN ═══ -->
+        <section class="seccion" id="seccion-informacion">
+          <!-- VISTA LISTA -->
+          <div id="info-vista-lista">
+            <div class="cad-list-card">
+              <div class="cad-list-header">
+                <div class="cad-list-title">📋 CADs de la Región</div>
+              </div>
+              <div style="overflow-x: auto">
+                <table>
+                  <thead>
+                    <tr class="filtros-row">
+                      <th>
+                        <input
+                          type="text"
+                          class="filtro-input"
+                          id="fi-buscar"
+                          placeholder="Buscar ID CAD..."
+                          oninput="filtrarInfo()"
+                          style="width: 100%"
+                        />
+                      </th>
+                      <th>
+                        <select
+                          class="filtro-select"
+                          id="fi-estado-doc"
+                          onchange="filtrarInfo()"
+                          style="width: 100%"
+                        >
+                          <option value="">Estado Documentación</option>
+                          <option>LOCAL OPERATIVO</option>
+                          <option>LOCAL OPERATIVO PRONATEL IMP</option>
+                          <option>LOCAL OPERATIVO O&amp;M</option>
+                          <option>CIERRE POR DECISIÓN MUNICIPAL</option>
+                          <option>ENCARGADOS NO RESPONDEN</option>
+                          <option>MUNICIPALIDAD SIN PERSONAL</option>
+                          <option>PROBLEMA INFRAESTRUCTURA / SERVICIO</option>
+                        </select>
+                      </th>
+                      <th>
+                        <input
+                          type="text"
+                          class="filtro-input"
+                          id="fi-lider"
+                          placeholder="Buscar Líder..."
+                          oninput="filtrarInfo()"
+                          style="width: 100%"
+                        />
+                      </th>
+                      <th>
+                        <input
+                          type="text"
+                          class="filtro-input"
+                          id="fi-celular"
+                          placeholder="Buscar Celular..."
+                          oninput="filtrarInfo()"
+                          style="width: 100%"
+                        />
+                      </th>
+                    </tr>
+                    <tr>
+                      <th>ID CAD</th>
+                      <th>Estado Documentación</th>
+                      <th>Líder Digital</th>
+                      <th>Celular</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-info"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- VISTA DETALLE CON TABS -->
+          <div id="info-vista-detalle" style="display: none">
+            <div class="detalle-topbar">
+              <div class="detalle-topbar-titulo" id="info-detalle-titulo">
+                —
+              </div>
+              <div style="display: flex; gap: 8px">
+                <button class="btn-acta-pdf" onclick="generarActaPDF()">
+                  📄 Descargar Acta Excel
+                </button>
+                <button class="btn-volver" onclick="volverListaInfo()">
+                  Volver a la lista →
+                </button>
+              </div>
+            </div>
+            <div class="tabs-bar">
+              <button
+                class="tab-btn activo"
+                onclick="cambiarTabInfo('autoridad', this)"
+              >
+                👔 Autoridad Local
+              </button>
+              <button class="tab-btn" onclick="cambiarTabInfo('lider', this)">
+                👤 Líder Digital
+              </button>
+            </div>
+            <div class="tab-content" id="tab-info-autoridad">
+              <div class="form-grid cols-2">
+                <div class="form-grupo col-full">
+                  <label>Nombre Autoridad</label
+                  ><input type="text" class="form-input" id="i-aut-nombre" />
+                </div>
+                <div class="form-grupo">
+                  <label>Cargo de la Autoridad</label
+                  ><input type="text" class="form-input" id="i-aut-cargo" />
+                </div>
+                <div class="form-grupo">
+                  <label>Celular de la Autoridad</label
+                  ><input type="text" class="form-input" id="i-aut-celular" />
+                </div>
+                <div class="form-grupo">
+                  <label>Género</label>
+                  <select class="form-input" id="i-aut-genero">
+                    <option value="">--</option>
+                    <option>MASCULINO</option>
+                    <option>FEMENINO</option>
+                  </select>
+                </div>
+                <div class="form-grupo">
+                  <label>Profesión / Oficio</label
+                  ><input type="text" class="form-input" id="i-aut-profesion" />
+                </div>
+                <div class="form-grupo">
+                  <label>Estado del Convenio</label>
+                  <select class="form-input" id="i-aut-convenio">
+                    <option>COMPLETO</option>
+                    <option>COMPLETO (SIN FIRMA)</option>
+                    <option>INCOMPLETO</option>
+                    <option>SIN INFORMACIÓN</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn-guardar-detalle" onclick="guardarAutoridad()">
+                💾 Actualizar Autoridad
+              </button>
+              <div class="mensaje-detalle" id="msg-autoridad"></div>
+            </div>
+            <div class="tab-content" id="tab-info-lider" style="display: none">
+              <div class="form-grid cols-2">
+                <div class="form-grupo col-full">
+                  <label>Nombre Responsable</label
+                  ><input type="text" class="form-input" id="i-lid-nombre" />
+                </div>
+                <div class="form-grupo">
+                  <label>DNI</label
+                  ><input type="text" class="form-input" id="i-lid-dni" />
+                </div>
+                <div class="form-grupo">
+                  <label>Teléfono</label
+                  ><input type="text" class="form-input" id="i-lid-telefono" />
+                </div>
+                <div class="form-grupo">
+                  <label>Género</label
+                  ><select class="form-input" id="i-lid-genero">
+                    <option>MASCULINO</option>
+                    <option>FEMENINO</option>
+                  </select>
+                </div>
+                <div class="form-grupo">
+                  <label>Edad</label
+                  ><input type="number" class="form-input" id="i-lid-edad" />
+                </div>
+                <div class="form-grupo col-full">
+                  <label>Correo</label
+                  ><input type="email" class="form-input" id="i-lid-correo" />
+                </div>
+                <div class="form-grupo">
+                  <label>Cargo / Profesión</label
+                  ><input type="text" class="form-input" id="i-lid-cargo" />
+                </div>
+                <div class="form-grupo">
+                  <label>Localidad de Origen</label
+                  ><input type="text" class="form-input" id="i-lid-localidad" />
+                </div>
+                <div class="form-grupo col-full">
+                  <label>Domicilio</label
+                  ><input type="text" class="form-input" id="i-lid-domicilio" />
+                </div>
+              </div>
+              <button class="btn-guardar-detalle" onclick="guardarLiderInfo()">
+                💾 Actualizar Líder Digital
+              </button>
+              <div class="mensaje-detalle" id="msg-lider-info"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══ OPERACIÓN ═══ -->
+        <section class="seccion" id="seccion-operacion">
+          <!-- VISTA LISTA -->
+          <div id="ops-vista-lista">
+            <div class="cad-list-card">
+              <div class="cad-list-header">
+                <div class="cad-list-title">⚙️ Estado Operativo de CADs</div>
+              </div>
+              <div style="overflow-x: auto">
+                <table>
+                  <thead>
+                    <tr class="filtros-row">
+                      <th>
+                        <input
+                          type="text"
+                          class="filtro-input"
+                          id="fo-buscar"
+                          placeholder="Buscar ID CAD..."
+                          oninput="filtrarOps()"
+                          style="width: 100%"
+                        />
+                      </th>
+                      <th>
+                        <select
+                          class="filtro-select"
+                          id="fo-estado"
+                          onchange="filtrarOps()"
+                          style="width: 100%"
+                        >
+                          <option value="">Estado Op.</option>
+                          <option>LOCAL ABIERTO</option>
+                          <option>LOCAL CERRADO</option>
+                        </select>
+                      </th>
+                      <th>
+                        <select
+                          class="filtro-select"
+                          id="fo-sub"
+                          onchange="filtrarOps()"
+                          style="width: 100%"
+                        >
+                          <option value="">Sub Estado</option>
+                          <option>LOCAL OPERATIVO</option>
+                          <option>CIERRE POR DECISIÓN MUNICIPAL</option>
+                          <option>ENCARGADOS NO RESPONDEN</option>
+                          <option>MUNICIPALIDAD SIN PERSONAL</option>
+                          <option>PROBLEMA INFRAESTRUCTURA / SERVICIO</option>
+                        </select>
+                      </th>
+                      <th>
+                        <select
+                          class="filtro-select"
+                          id="fo-estado-doc"
+                          onchange="filtrarOps()"
+                          style="width: 100%"
+                        >
+                          <option value="">Estado Documentación</option>
+                          <option>LOCAL OPERATIVO</option>
+                          <option>LOCAL OPERATIVO PRONATEL IMP</option>
+                          <option>LOCAL OPERATIVO O&amp;M</option>
+                          <option>CIERRE POR DECISIÓN MUNICIPAL</option>
+                          <option>ENCARGADOS NO RESPONDEN</option>
+                          <option>MUNICIPALIDAD SIN PERSONAL</option>
+                          <option>PROBLEMA INFRAESTRUCTURA / SERVICIO</option>
+                        </select>
+                      </th>
+                      <th>
+                        <select
+                          class="filtro-select"
+                          id="fo-abriohoy"
+                          onchange="filtrarOps()"
+                          style="width: 100%"
+                        >
+                          <option value="">¿Abrió hoy?</option>
+                          <option value="SI">Sí</option>
+                          <option value="NO">No</option>
+                        </select>
+                      </th>
+                    </tr>
+                    <tr>
+                      <th>ID CAD</th>
+                      <th>Estado Operación</th>
+                      <th>Sub Estado</th>
+                      <th>Estado Documentación</th>
+                      <th>Abrió Hoy</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-ops"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <!-- VISTA DETALLE CON TABS -->
+          <div id="ops-vista-detalle" style="display: none">
+            <div class="detalle-topbar">
+              <div class="detalle-topbar-titulo" id="ops-detalle-titulo">—</div>
+              <button class="btn-volver" onclick="volverListaOps()">
+                Volver a la lista →
+              </button>
+            </div>
+            <div class="tabs-bar">
+              <button
+                class="tab-btn activo"
+                onclick="cambiarTabOps('estado', this)"
+              >
+                🏢 Estado Operativo
+              </button>
+              <button class="tab-btn" onclick="cambiarTabOps('apertura', this)">
+                📷 Registro de Apertura
+              </button>
+              <button
+                class="tab-btn"
+                onclick="cambiarTabOps('seguimiento', this)"
+              >
+                📊 Seguimiento
+              </button>
+              <button
+                class="tab-btn"
+                onclick="cambiarTabOps('comentarios', this)"
+              >
+                💬 Comentarios
+              </button>
+            </div>
+            <div class="tab-content" id="tab-ops-estado">
+              <div class="form-grid cols-3">
+                <div class="form-grupo">
+                  <label>Estado Operación</label
+                  ><select class="form-input" id="o-estado-op">
+                    <option>LOCAL ABIERTO</option>
+                    <option>LOCAL CERRADO</option>
+                  </select>
+                </div>
+                <div class="form-grupo">
+                  <label>Sub Estado</label
+                  ><select class="form-input" id="o-sub-estado">
+                    <option value="">—</option>
+                    <option>LOCAL OPERATIVO</option>
+                    <option>CIERRE POR DECISIÓN MUNICIPAL</option>
+                    <option>ENCARGADOS NO RESPONDEN</option>
+                    <option>MUNICIPALIDAD SIN PERSONAL</option>
+                    <option>PROBLEMA INFRAESTRUCTURA / SERVICIO</option>
+                  </select>
+                </div>
+                <div class="form-grupo">
+                  <label>Abrió Hoy</label
+                  ><input
+                    type="text"
+                    class="form-input"
+                    id="o-abrio-hoy"
+                    disabled
+                  />
+                </div>
+                <div class="form-grupo">
+                  <label>Estado YOFC Doc.</label
+                  ><select class="form-input" id="o-estado-yofc">
+                    <option value="">—</option>
+                    <option>LOCAL OPERATIVO</option>
+                    <option>LOCAL OPERATIVO PRONATEL IMP</option>
+                    <option>LOCAL OPERATIVO O&amp;M</option>
+                    <option>CIERRE POR DECISIÓN MUNICIPAL</option>
+                    <option>ENCARGADOS NO RESPONDEN</option>
+                    <option>MUNICIPALIDAD SIN PERSONAL</option>
+                    <option>PROBLEMA INFRAESTRUCTURA / SERVICIO</option>
+                  </select>
+                </div>
+                <div class="form-grupo">
+                  <label>Etiqueta Infraestructura</label
+                  ><select class="form-input" id="o-etiqueta-infra">
+                    <option>NO APLICA</option>
+                    <option>SIN INTERNET</option>
+                    <option>SIN ENERGÍA</option>
+                    <option>PROBLEMA DEL LOCAL</option>
+                    <option>EQUIPOS ROBADOS</option>
+                    <option>EQUIPOS AVERIADOS</option>
+                  </select>
+                </div>
+              </div>
+              <button class="btn-guardar-detalle" onclick="guardarEstadoOp()">
+                💾 Guardar Estado
+              </button>
+              <div class="mensaje-detalle" id="msg-estado-op"></div>
+            </div>
+            <div
+              class="tab-content"
+              id="tab-ops-apertura"
+              style="display: none"
+            >
+              <div class="form-grid cols-2">
+                <div class="form-grupo">
+                  <label>CAD</label
+                  ><input
+                    type="text"
+                    class="form-input"
+                    id="o-ap-cad"
+                    disabled
+                  />
+                </div>
+                <div class="form-grupo">
+                  <label>Fecha</label
+                  ><input type="date" class="form-input" id="o-ap-fecha" />
+                </div>
+              </div>
+              <div class="form-grupo" style="margin-top: 12px">
+                <label>Fotos (mínimo 1, máximo 4)</label>
+                <div
+                  class="foto-upload-area"
+                  onclick="document.getElementById('o-ap-fotos-input').click()"
+                >
+                  📷 Haz clic para seleccionar fotos
+                </div>
+                <input
+                  type="file"
+                  id="o-ap-fotos-input"
+                  accept="image/*"
+                  multiple
+                  style="display: none"
+                  onchange="previewFotos(this)"
+                />
+                <div class="foto-preview" id="o-ap-preview"></div>
+              </div>
+              <button class="btn-guardar-detalle" onclick="registrarApertura()">
+                📷 Registrar Apertura
+              </button>
+              <div class="mensaje-detalle" id="msg-apertura"></div>
+            </div>
+            <div
+              class="tab-content"
+              id="tab-ops-seguimiento"
+              style="display: none"
+            >
+              <div class="seguimiento-layout">
+                <div class="seguimiento-izq">
+                  <div class="form-grupo" style="margin-bottom: 14px">
+                    <label>Usuarios Registrados</label
+                    ><input
+                      type="text"
+                      class="form-input"
+                      id="o-usuarios-reg"
+                      disabled
+                    />
+                  </div>
+                  <div class="form-grupo">
+                    <label>Días Abiertos (mes)</label
+                    ><input
+                      type="text"
+                      class="form-input"
+                      id="o-dias-abiertos"
+                      disabled
+                    />
+                  </div>
+                </div>
+                <div class="seguimiento-der">
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      gap: 12px;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    <button
+                      class="cal-nav-btn"
+                      onclick="navegarMesCal(-1)"
+                      title="Mes anterior"
+                    >
+                      ◀
+                    </button>
+                    <span
+                      id="o-calendario-titulo"
+                      style="
+                        font-weight: 700;
+                        color: #0c3b5e;
+                        text-transform: capitalize;
+                        font-size: 14px;
+                      "
+                      >—</span
+                    >
+                    <button
+                      class="cal-nav-btn"
+                      onclick="navegarMesCal(1)"
+                      title="Mes siguiente"
+                    >
+                      ▶
+                    </button>
+                  </div>
+                  <div id="o-calendario" style="text-align: center">
+                    Cargando...
+                  </div>
+                  <div class="cal-leyenda">
+                    <span
+                      ><span
+                        class="cal-leyenda-dot"
+                        style="background: #22c55e"
+                      ></span
+                      >Abierto</span
+                    ><span
+                      ><span
+                        class="cal-leyenda-dot"
+                        style="background: #ef4444"
+                      ></span
+                      >Cerrado</span
+                    ><span
+                      ><span
+                        class="cal-leyenda-dot"
+                        style="background: #fbbf24"
+                      ></span
+                      >Pendiente foto</span
+                    ><span
+                      ><span
+                        class="cal-leyenda-dot"
+                        style="background: #e2e8f0"
+                      ></span
+                      >Fin de semana</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="tab-content"
+              id="tab-ops-comentarios"
+              style="display: none"
+            >
+              <div class="comentario-nuevo">
+                <div class="com-header-row">
+                  <div class="com-titulo">💬 Comentarios de Hoy</div>
+                  <button
+                    class="btn-guardar-detalle"
+                    onclick="guardarComentario()"
+                    style="margin: 0; padding: 8px 20px; font-size: 12px"
+                  >
+                    💾 Guardar
+                  </button>
+                </div>
+                <textarea
+                  class="form-input com-textarea"
+                  id="o-com-texto"
+                  rows="3"
+                  placeholder="Escribe tu comentario sobre este CAD..."
+                ></textarea>
+                <div
+                  class="mensaje-detalle"
+                  id="msg-comentario"
+                  style="margin-top: 8px"
+                ></div>
+              </div>
+              <div style="margin-top: 20px">
+                <div
+                  style="
+                    font-size: 13px;
+                    font-weight: 700;
+                    color: #0c3b5e;
+                    margin-bottom: 10px;
+                  "
+                >
+                  📋 Historial de Comentarios
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width: 90px">Fecha</th>
+                      <th style="width: 140px">Usuario</th>
+                      <th>Comentario</th>
+                      <th style="width: 80px">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabla-comentarios">
+                    <tr>
+                      <td colspan="4" class="empty">Sin comentarios</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <span id="o-com-cad-nombre" style="display: none"></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══ ASISTENTES ═══ -->
+        <section class="seccion" id="seccion-asistentes">
+          <div class="asist-card">
+            <div class="asist-header">
+              <div class="asist-titulo" id="asist-titulo">
+                Registro de Visitas — Hoy
+              </div>
+              <div class="asist-filtros">
+                <input
+                  type="date"
+                  class="filtro-input"
+                  id="fa-fecha"
+                  onchange="cambiarFechaAsist()"
+                  style="width: 140px"
+                />
+                <select
+                  class="filtro-select"
+                  id="fa-cad"
+                  onchange="filtrarAsist()"
+                >
+                  <option value="">Todos los CADs</option>
+                </select>
+                <input
+                  type="text"
+                  class="filtro-input"
+                  id="fa-buscar"
+                  placeholder="Buscar DNI o nombre..."
+                  oninput="filtrarAsist()"
+                  style="width: 160px"
+                />
+                <select
+                  class="filtro-select"
+                  id="fa-estado"
+                  onchange="filtrarAsist()"
+                >
+                  <option value="">Estado</option>
+                  <option value="ABIERTA">Abierta</option>
+                  <option value="CERRADA">Cerrada</option>
+                </select>
+                <button class="btn-nuevo" onclick="abrirPanel()">
+                  + Nuevo Visitante
+                </button>
+              </div>
+            </div>
+            <div style="overflow-x: auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>CAD</th>
+                    <th>Entrada</th>
+                    <th>Salida</th>
+                    <th>DNI</th>
+                    <th>Nombres</th>
+                    <th>Apellidos</th>
+                    <th>Duración</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-asist">
+                  <tr>
+                    <td colspan="10" class="empty">Cargando...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ═══ REPORTES ═══ -->
+        <section class="seccion" id="seccion-reportes">
+          <div
+            class="reportes-msg"
+            id="reportes-msg"
+            style="text-align: center; padding: 60px 20px; color: #94a3b8"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              style="
+                width: 48px;
+                height: 48px;
+                stroke: #cbd5e1;
+                margin-bottom: 12px;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+              "
+            >
+              <path
+                d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+              />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
+            <div
+              style="
+                font-size: 14px;
+                font-weight: 600;
+                color: #64748b;
+                margin-bottom: 6px;
+              "
+            >
+              Módulo de Reportes
+            </div>
+            <div style="font-size: 13px">Cargando permisos...</div>
+          </div>
+          <div id="reportes-regiones" style="display: none">
+            <div
+              style="
+                font-size: 13px;
+                font-weight: 600;
+                color: #64748b;
+                margin-bottom: 16px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+              "
+            >
+              Regiones habilitadas
+            </div>
+            <div class="reportes-region-grid" id="reportes-region-grid"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ═══ PANEL NUEVO VISITANTE ═══ -->
+    <div class="panel-overlay" id="panel-overlay" onclick="cerrarPanel()"></div>
+    <div class="panel" id="panel">
+      <div class="panel-header">
+        <div class="panel-title">+ Nuevo Visitante</div>
+        <button class="panel-close" onclick="cerrarPanel()">✕</button>
+      </div>
+      <div class="panel-body">
+        <!-- Selector de CAD -->
+        <div class="p-section">🏢 Seleccionar CAD</div>
+        <div class="p-group">
+          <select class="p-input" id="p-cad">
+            <option value="">— Selecciona un CAD —</option>
+          </select>
+        </div>
+        <div class="p-divider"></div>
+        <div class="p-section">🔍 Buscar por DNI</div>
+        <div class="p-group" style="display: flex; gap: 8px">
+          <input
+            type="text"
+            class="p-input"
+            id="p-dni"
+            placeholder="8 dígitos"
+            maxlength="8"
+            style="flex: 1"
+            onkeyup="if (event.key === 'Enter') buscarDNI();"
+          />
+          <button class="btn-nuevo" onclick="buscarDNI()">Buscar</button>
+        </div>
+        <div class="p-section" style="margin-top: 12px">
+          🔍 Buscar por Nombre
+        </div>
+        <div class="p-group" style="display: flex; gap: 8px">
+          <input
+            type="text"
+            class="p-input"
+            id="p-nombre-buscar"
+            placeholder="Nombre o apellido..."
+            style="flex: 1"
+            onkeyup="if (event.key === 'Enter') buscarNombre();"
+          />
+          <button class="btn-nuevo" onclick="buscarNombre()">Buscar</button>
+        </div>
+        <div
+          id="p-nombre-resultados"
+          style="
+            display: none;
+            max-height: 180px;
+            overflow-y: auto;
+            margin-top: 8px;
+          "
+        ></div>
+        <div class="p-result" id="p-result" style="display: none"></div>
+        <div id="p-form-nuevo" style="display: none">
+          <div class="p-section">📋 Datos del nuevo asistente</div>
+          <div class="p-row">
+            <div class="p-group">
+              <label class="p-label">Nombres</label>
+              <input class="p-input" id="p-nombres" />
+            </div>
+            <div class="p-group">
+              <label class="p-label">Apellidos</label>
+              <input class="p-input" id="p-apellidos" />
+            </div>
+          </div>
+          <div class="p-row">
+            <div class="p-group">
+              <label class="p-label">Género</label>
+              <select class="p-input" id="p-genero">
+                <option value="">—</option>
+                <option value="MASCULINO">Masculino</option>
+                <option value="FEMENINO">Femenino</option>
+              </select>
+            </div>
+            <div class="p-group">
+              <label class="p-label">Edad</label>
+              <input
+                type="number"
+                class="p-input"
+                id="p-edad"
+                min="1"
+                max="120"
+              />
+            </div>
+          </div>
+          <div class="p-row">
+            <div class="p-group">
+              <label class="p-label">Celular</label>
+              <input
+                class="p-input"
+                id="p-celular"
+                placeholder="Nro o NO TIENE"
+              />
+            </div>
+            <div class="p-group">
+              <label class="p-label">Discapacidad</label>
+              <select class="p-input" id="p-discapacidad">
+                <option value="false">No</option>
+                <option value="true">Sí</option>
+              </select>
+            </div>
+          </div>
+          <div class="p-group">
+            <label class="p-label">Profesión / Oficio</label>
+            <input
+              class="p-input"
+              id="p-profesion"
+              placeholder="Ej: Agricultor, Estudiante..."
+            />
+          </div>
+        </div>
+        <div id="p-servicio-section" style="display: none">
+          <div class="p-divider"></div>
+          <div class="p-section">🚪 Servicio a utilizar</div>
+          <div class="servicio-grid">
+            <div class="srv-opt" onclick="selSrv(this, 'internet')">
+              <span class="srv-icon">🌐</span>Internet
+            </div>
+            <div class="srv-opt" onclick="selSrv(this, 'asesoria')">
+              <span class="srv-icon">📚</span>Asesoría
+            </div>
+            <div class="srv-opt" onclick="selSrv(this, 'impresion')">
+              <span class="srv-icon">🖨️</span>Impresión
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-footer">
+        <button
+          class="btn-guardar-panel"
+          id="p-btn-guardar"
+          onclick="guardarVisita()"
+          disabled
+        >
+          🚪 Registrar entrada
+        </button>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"><span id="toast-msg"></span></div>
+
+    <script>
+      const SUPABASE_URL = "https://mjdckpytvczelqmdzixz.supabase.co";
+      const SUPABASE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qZGNrcHl0dmN6ZWxxbWR6aXh6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM3NjU4NTAsImV4cCI6MjA4OTM0MTg1MH0.OA0mW6dIR4uQ6wfMPtxN4yDAex33abauCQZU6gvt_L4";
+      const { createClient } = supabase;
+      const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+      let userProfile = null;
+      let regionActiva = "";
+      let regiones = [];
+      let cadsRegion = [];
+      let todasVisitas = [];
+      let asistenteSel = null;
+      let servicioSel = null;
+      let fechaFiltroAsist = "";
+      let primeraCargaAsist = true;
+
+      // ── UTILIDADES ──
+      function getFechaHoy() {
+        const a = new Date();
+        return `${a.getFullYear()}-${String(a.getMonth() + 1).padStart(
+          2,
+          "0",
+        )}-${String(a.getDate()).padStart(2, "0")}`;
+      }
+      function getHoraActual() {
+        return new Date().toLocaleTimeString("es-PE", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        });
+      }
+      function formatFechaDDMMYY(f) {
+        if (!f) return "—";
+        const p = f.split("-");
+        return p.length === 3 ? `${p[2]}/${p[1]}/${p[0].substring(2)}` : f;
+      }
+      function formatFechaTitulo(f) {
+        if (!f) return "";
+        const p = f.split("-");
+        return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : f;
+      }
+
+      // ── RELOJ ──
+      function actualizarReloj() {
+        const a = new Date();
+        document.getElementById("topbar-fecha").textContent =
+          a.toLocaleDateString("es-PE", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          });
+        document.getElementById("topbar-hora").textContent =
+          a.toLocaleTimeString("es-PE", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+      }
+      actualizarReloj();
+      setInterval(actualizarReloj, 1000);
+
+      // ── TOAST ──
+      function showToast(msg, tipo) {
+        const t = document.getElementById("toast");
+        t.innerHTML = msg;
+        t.className =
+          "toast show " + (tipo === "err" ? "toast-err" : "toast-ok");
+        setTimeout(() => t.classList.remove("show"), 3500);
+      }
+
+      // ── CERRAR SESIÓN ──
+      window.cerrarSesion = async function () {
+        await sb.auth.signOut();
+        window.location.href = "index.html";
+      };
+
+      // ── INIT ──
+      document.addEventListener("DOMContentLoaded", async () => {
+        const {
+          data: { session },
+        } = await sb.auth.getSession();
+        if (!session) {
+          window.location.href = "index.html";
+          return;
+        }
+
+        const { data: perfil } = await sb
+          .from("Usuarios")
+          .select("*")
+          .ilike("correo", session.user.email)
+          .maybeSingle();
+        if (!perfil) {
+          showToast("Usuario no encontrado", "err");
+          return;
+        }
+
+        const ok = ["coordinador", "administrador", "admin"];
+        if (!ok.includes((perfil.perfil || "").toLowerCase())) {
+          window.location.href = "dashboard.html";
+          return;
+        }
+        userProfile = perfil;
+
+        // Si es admin, adaptar sidebar con link de volver y rol correcto
+        const esAdmin =
+          (perfil.perfil || "").toLowerCase() === "administrador" ||
+          (perfil.perfil || "").toLowerCase() === "admin";
+        if (esAdmin) {
+          // Agregar link "Volver al Panel" al inicio del nav
+          const navEl = document.querySelector(".sidebar-nav");
+          const volverHTML = `
+            <div class="nav-sep">Admin</div>
+            <a class="nav-item" href="dashboard.html" style="color:rgba(255,255,255,0.7);font-size:12px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+              <span>Volver al Panel</span>
+            </a>
+            <div style="border-bottom:1px solid rgba(255,255,255,0.08);margin:6px 14px;"></div>
+          `;
+          navEl.insertAdjacentHTML("afterbegin", volverHTML);
+
+          // Cambiar el rol mostrado
+          const roleEl = document.querySelector(".user-role");
+          if (roleEl) roleEl.textContent = "Administrador";
+        }
+
+        // Nombre y avatar
+        const nombreCompleto = `${perfil.nombres || ""} ${
+          perfil.apellidos || ""
+        }`.trim();
+        document.getElementById("user-name").textContent = nombreCompleto;
+        document.getElementById("user-avatar").textContent = (perfil.nombres ||
+          "?")[0];
+        document.getElementById("topbar-titulo").textContent =
+          `📋 Bienvenido, ${nombreCompleto}`;
+
+        // Regiones (hasta 4, configuradas desde BD)
+        regiones = [perfil.region];
+        if (perfil.region_2) regiones.push(perfil.region_2);
+        if (perfil.region_3) regiones.push(perfil.region_3);
+        if (perfil.region_4) regiones.push(perfil.region_4);
+        regionActiva = regiones[0];
+
+        if (regiones.length === 1) {
+          document.getElementById("sidebar-region").textContent = regiones[0];
+        } else {
+          // Crear selector
+          const box = document.getElementById("sidebar-region-box");
+          const span = document.getElementById("sidebar-region");
+          const sel = document.createElement("select");
+          sel.className = "region-select";
+          sel.id = "region-select";
+          regiones.forEach((r) => {
+            const opt = document.createElement("option");
+            opt.value = r;
+            opt.textContent = r;
+            sel.appendChild(opt);
+          });
+          sel.onchange = function () {
+            regionActiva = this.value;
+            cargarTodo();
+          };
+          span.replaceWith(sel);
+        }
+
+        await cargarTodo();
+        await verificarPermisosReportes();
+      });
+
+      // ── CARGAR TODO ──
+      async function cargarTodo() {
+        // Cargar CADs de la región activa (incluye ESTADO_DOCUMENTACION para KPIs)
+        const { data: cads } = await sb
+          .from("Lista_CADs")
+          .select('"ID CAD", "REGION", "ESTADO_DOCUMENTACION"')
+          .eq("REGION", regionActiva)
+          .order("ID CAD");
+        cadsRegion = cads || [];
+
+        // Poblar selector de CAD en filtros
+        const selFiltro = document.getElementById("fa-cad");
+        selFiltro.innerHTML = '<option value="">Todos los CADs</option>';
+        cadsRegion.forEach((c) => {
+          selFiltro.innerHTML += `<option value="${c["ID CAD"]}">${c["ID CAD"]}</option>`;
+        });
+
+        // Poblar selector de CAD en panel nuevo visitante
+        const selPanel = document.getElementById("p-cad");
+        selPanel.innerHTML = '<option value="">— Selecciona un CAD —</option>';
+        cadsRegion.forEach((c) => {
+          selPanel.innerHTML += `<option value="${c["ID CAD"]}">${c["ID CAD"]}</option>`;
+        });
+
+        await cargarKPIs();
+        primeraCargaAsist = true;
+        fechaFiltroAsist = "";
+        document.getElementById("fa-fecha").value = "";
+        await cargarVisitasCoord();
+      }
+
+      // ── KPIs ──
+      async function cargarKPIs() {
+        const cadIds = cadsRegion.map((c) => c["ID CAD"]);
+        const total = cadsRegion.length;
+
+        // ═══ FILA 1: KPIs del Mes (basados en ESTADO_DOCUMENTACION) ═══
+        document.getElementById("kpi-total").textContent = total;
+
+        const operativos = cadsRegion.filter((c) => {
+          const estado = (c.ESTADO_DOCUMENTACION || "").toUpperCase().trim();
+          return (
+            estado === "LOCAL OPERATIVO" || estado === "LOCAL OPERATIVO O&M"
+          );
+        }).length;
+
+        const cerradosMes = total - operativos;
+        const rate = total > 0 ? Math.round((operativos / total) * 100) : 0;
+
+        document.getElementById("kpi-operativos").textContent = operativos;
+        document.getElementById("kpi-rate").textContent = rate + "%";
+        document.getElementById("kpi-cerrados-mes").textContent = cerradosMes;
+
+        // ═══ FILA 2: Indicadores del Día ═══
+        if (!cadIds.length) {
+          document.getElementById("kpi-abiertos-hoy").textContent = "0";
+          document.getElementById("kpi-cerrados-hoy").textContent = "0";
+          document.getElementById("kpi-asist-hoy").textContent = "0";
+          document.getElementById("kpi-asist-abierta").textContent = "0";
+          return;
+        }
+
+        const hoy = getFechaHoy();
+
+        // CADs abiertos hoy
+        const { data: aperturas } = await sb
+          .from("Apertura_CAD")
+          .select("cad_id")
+          .eq("fecha", hoy)
+          .in("cad_id", cadIds);
+        const abiertosHoy = new Set((aperturas || []).map((a) => a.cad_id))
+          .size;
+        document.getElementById("kpi-abiertos-hoy").textContent = abiertosHoy;
+        document.getElementById("kpi-cerrados-hoy").textContent =
+          total - abiertosHoy;
+
+        // Asistentes registrados hoy (total visitas del día)
+        const { count: asistHoy } = await sb
+          .from("Visitantes")
+          .select("*", { count: "exact", head: true })
+          .eq("fecha_visita", hoy)
+          .in("cad_id", cadIds);
+        document.getElementById("kpi-asist-hoy").textContent = asistHoy || 0;
+
+        // Asistentes con estado ABIERTA hoy
+        const { count: asistAbierta } = await sb
+          .from("Visitantes")
+          .select("*", { count: "exact", head: true })
+          .eq("fecha_visita", hoy)
+          .eq("estado_visita", "ABIERTA")
+          .in("cad_id", cadIds);
+        document.getElementById("kpi-asist-abierta").textContent =
+          asistAbierta || 0;
+      }
+
+      // ── NAV ──
+      window.cambiarSeccion = function (s) {
+        const navItem = event ? event.target.closest(".nav-item") : null;
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((i) => i.classList.remove("activo"));
+        if (navItem) {
+          navItem.classList.add("activo");
+        } else {
+          const target = document.querySelector(`.nav-item[onclick*="'${s}'"]`);
+          if (target) target.classList.add("activo");
+        }
+        document
+          .querySelectorAll(".seccion")
+          .forEach((sec) => sec.classList.remove("activa"));
+        document.getElementById("seccion-" + s).classList.add("activa");
+
+        // Recargar datos al entrar a cada sección
+        if (s === "asistentes") cargarVisitasCoord();
+        if (s === "dashboard") cargarKPIs();
+        if (s === "informacion") cargarInfoCADs();
+        if (s === "operacion") cargarOpsCADs();
+        if (s === "reportes") cargarReportesCoord();
+      };
+
+      // ══════════════════════════════════════════════
+      // ══  MÓDULO INFORMACIÓN
+      // ══════════════════════════════════════════════
+
+      let todosCADsInfo = [];
+      let cadSelInfo = null;
+      let mapaLideres = {}; // cad_asignado → usuario
+
+      async function cargarInfoCADs() {
+        // 1) Cargar CADs
+        const { data: cads, error } = await sb
+          .from("Lista_CADs")
+          .select("*")
+          .eq("REGION", regionActiva)
+          .order("ID CAD");
+        if (error) {
+          showToast("Error cargando CADs: " + error.message, "err");
+        }
+        todosCADsInfo = cads || [];
+
+        // 2) Cargar líderes digitales de la región desde Usuarios
+        const cadIds = todosCADsInfo.map((c) => c["ID CAD"]);
+        mapaLideres = {};
+        if (cadIds.length) {
+          const { data: lideres } = await sb
+            .from("Usuarios")
+            .select("*")
+            .eq("perfil", "lider_digital")
+            .in("cad_asignado", cadIds);
+          (lideres || []).forEach((l) => {
+            mapaLideres[l.cad_asignado] = l;
+          });
+        }
+        filtrarInfo();
+      }
+
+      window.filtrarInfo = function () {
+        const buscar = document.getElementById("fi-buscar").value.toLowerCase();
+        const estadoDoc = document.getElementById("fi-estado-doc").value;
+        const buscarLider = document
+          .getElementById("fi-lider")
+          .value.toLowerCase();
+        const buscarCelular = document
+          .getElementById("fi-celular")
+          .value.toLowerCase();
+        const filtered = todosCADsInfo.filter((c) => {
+          const lider = mapaLideres[c["ID CAD"]] || {};
+          const idCad = (c["ID CAD"] || "").toLowerCase();
+          const nombreLider = `${lider.nombres || ""} ${
+            lider.apellidos || ""
+          }`.toLowerCase();
+          const celular = (lider.celular_usuario || "").toLowerCase();
+          const estDoc = c["ESTADO_DOCUMENTACION"] || "";
+          return (
+            (!buscar || idCad.includes(buscar)) &&
+            (!estadoDoc || estDoc === estadoDoc) &&
+            (!buscarLider || nombreLider.includes(buscarLider)) &&
+            (!buscarCelular || celular.includes(buscarCelular))
+          );
+        });
+        renderTablaInfo(filtered);
+      };
+
+      function renderTablaInfo(lista) {
+        const tbody = document.getElementById("tabla-info");
+        if (!lista.length) {
+          tbody.innerHTML =
+            '<tr><td colspan="4" class="empty">Sin CADs</td></tr>';
+          return;
+        }
+        tbody.innerHTML = lista
+          .map((c) => {
+            const sel =
+              cadSelInfo && cadSelInfo["ID CAD"] === c["ID CAD"]
+                ? "selected"
+                : "";
+            const lider = mapaLideres[c["ID CAD"]];
+            const nombreLider = lider
+              ? `${lider.nombres || ""} ${lider.apellidos || ""}`.trim()
+              : "";
+            const celularLider = lider ? lider.celular_usuario || "" : "";
+            const estDoc = c["ESTADO_DOCUMENTACION"] || "—";
+            const badgeDoc =
+              estDoc === "LOCAL OPERATIVO" ? "badge-abierta" : "badge-cerrada";
+            return `<tr class="clickable ${sel}" onclick="seleccionarCADInfo('${
+              c["ID CAD"]
+            }')">
+            <td style="font-weight:600;color:#0c3b5e">${c["ID CAD"]}</td>
+            <td><span class="badge ${badgeDoc}">${estDoc}</span></td>
+            <td>${
+              nombreLider || '<span style="color:#bbb">Sin asignar</span>'
+            }</td>
+            <td>${celularLider || "—"}</td>
+          </tr>`;
+          })
+          .join("");
+      }
+
+      window.seleccionarCADInfo = function (idCad) {
+        cadSelInfo = todosCADsInfo.find((c) => c["ID CAD"] === idCad);
+        if (!cadSelInfo) return;
+        const lider = mapaLideres[idCad] || {};
+
+        // Cambiar a vista detalle
+        document.getElementById("info-vista-lista").style.display = "none";
+        document.getElementById("info-vista-detalle").style.display = "block";
+        document.getElementById("info-detalle-titulo").textContent = idCad;
+
+        // Poblar autoridad (desde Lista_CADs)
+        document.getElementById("i-aut-nombre").value =
+          cadSelInfo["NOMBRE AUTORIDAD"] || "";
+        document.getElementById("i-aut-cargo").value =
+          cadSelInfo["CARGO_AUTORIDAD"] || "";
+        document.getElementById("i-aut-celular").value =
+          cadSelInfo["CELULAR_AUTORIDAD"] || "";
+        document.getElementById("i-aut-genero").value =
+          cadSelInfo["GENERO"] || "";
+        document.getElementById("i-aut-profesion").value =
+          cadSelInfo["CARGO_PROFESION_OFICIO"] || "";
+        document.getElementById("i-aut-convenio").value =
+          cadSelInfo["ESTADO_CONVENIO"] || "COMPLETO";
+
+        // Poblar líder (desde Usuarios)
+        document.getElementById("i-lid-nombre").value = `${
+          lider.nombres || ""
+        } ${lider.apellidos || ""}`.trim();
+        document.getElementById("i-lid-dni").value = lider.dni || "";
+        document.getElementById("i-lid-telefono").value =
+          lider.celular_usuario || "";
+        document.getElementById("i-lid-genero").value =
+          lider.genero || "MASCULINO";
+        document.getElementById("i-lid-edad").value = lider.edad || "";
+        document.getElementById("i-lid-correo").value = lider.correo || "";
+        document.getElementById("i-lid-cargo").value =
+          lider.cargo_profesion || "";
+        document.getElementById("i-lid-localidad").value =
+          lider.localidad_origen || "";
+        document.getElementById("i-lid-domicilio").value =
+          lider.domicilio || "";
+
+        // Mostrar primera tab
+        cambiarTabInfo(
+          "autoridad",
+          document.querySelector("#info-vista-detalle .tab-btn"),
+        );
+      };
+
+      window.volverListaInfo = function () {
+        document.getElementById("info-vista-detalle").style.display = "none";
+        document.getElementById("info-vista-lista").style.display = "block";
+        cargarInfoCADs();
+      };
+
+      window.cambiarTabInfo = function (tab, btn) {
+        document
+          .querySelectorAll("#info-vista-detalle .tab-content")
+          .forEach((p) => (p.style.display = "none"));
+        document
+          .querySelectorAll("#info-vista-detalle .tab-btn")
+          .forEach((b) => b.classList.remove("activo"));
+        document.getElementById("tab-info-" + tab).style.display = "block";
+        if (btn) btn.classList.add("activo");
+      };
+
+      window.guardarAutoridad = async function () {
+        if (!cadSelInfo) return;
+        const msg = document.getElementById("msg-autoridad");
+        const ahora = new Date().toLocaleString("es-PE", {
+          timeZone: "America/Lima",
+        });
+        const { error } = await sb
+          .from("Lista_CADs")
+          .update({
+            "NOMBRE AUTORIDAD": document
+              .getElementById("i-aut-nombre")
+              .value.trim(),
+            CARGO_AUTORIDAD: document
+              .getElementById("i-aut-cargo")
+              .value.trim(),
+            CELULAR_AUTORIDAD: document
+              .getElementById("i-aut-celular")
+              .value.trim(),
+            GENERO: document.getElementById("i-aut-genero").value,
+            CARGO_PROFESION_OFICIO: document
+              .getElementById("i-aut-profesion")
+              .value.trim(),
+            ESTADO_CONVENIO: document.getElementById("i-aut-convenio").value,
+          })
+          .eq("ID CAD", cadSelInfo["ID CAD"]);
+
+        if (error) {
+          msg.className = "mensaje-detalle msg-err";
+          msg.textContent = "Error: " + error.message;
+        } else {
+          msg.className = "mensaje-detalle msg-ok";
+          msg.textContent = "✓ Autoridad actualizada";
+          // Actualizar en memoria
+          const idx = todosCADsInfo.findIndex(
+            (c) => c["ID CAD"] === cadSelInfo["ID CAD"],
+          );
+          if (idx > -1) {
+            todosCADsInfo[idx]["NOMBRE AUTORIDAD"] = document
+              .getElementById("i-aut-nombre")
+              .value.trim();
+            todosCADsInfo[idx]["CARGO_AUTORIDAD"] = document
+              .getElementById("i-aut-cargo")
+              .value.trim();
+            todosCADsInfo[idx]["CELULAR_AUTORIDAD"] = document
+              .getElementById("i-aut-celular")
+              .value.trim();
+            todosCADsInfo[idx]["GENERO"] =
+              document.getElementById("i-aut-genero").value;
+            todosCADsInfo[idx]["CARGO_PROFESION_OFICIO"] = document
+              .getElementById("i-aut-profesion")
+              .value.trim();
+          }
+        }
+        msg.style.display = "block";
+        setTimeout(() => (msg.style.display = "none"), 3000);
+      };
+
+      window.guardarLiderInfo = async function () {
+        if (!cadSelInfo) return;
+        const idCad = cadSelInfo["ID CAD"];
+        const lider = mapaLideres[idCad];
+        const msg = document.getElementById("msg-lider-info");
+
+        if (!lider) {
+          msg.className = "mensaje-detalle msg-err";
+          msg.textContent =
+            "No hay líder digital asignado a este CAD. Asigna uno desde Gestión de Usuarios.";
+          msg.style.display = "block";
+          setTimeout(() => (msg.style.display = "none"), 4000);
+          return;
+        }
+
+        const nombreCompleto = document
+          .getElementById("i-lid-nombre")
+          .value.trim();
+        const partes = nombreCompleto.split(" ");
+        const nombres = partes.slice(0, Math.ceil(partes.length / 2)).join(" ");
+        const apellidos = partes.slice(Math.ceil(partes.length / 2)).join(" ");
+
+        const updates = {
+          nombres: nombres,
+          apellidos: apellidos,
+          dni: document.getElementById("i-lid-dni").value.trim(),
+          celular_usuario: document
+            .getElementById("i-lid-telefono")
+            .value.trim(),
+          genero: document.getElementById("i-lid-genero").value,
+          edad: parseInt(document.getElementById("i-lid-edad").value) || null,
+          correo: document.getElementById("i-lid-correo").value.trim(),
+          cargo_profesion: document.getElementById("i-lid-cargo").value.trim(),
+          localidad_origen: document
+            .getElementById("i-lid-localidad")
+            .value.trim(),
+          domicilio: document.getElementById("i-lid-domicilio").value.trim(),
+        };
+        const { error } = await sb
+          .from("Usuarios")
+          .update(updates)
+          .eq("id", lider.id);
+
+        if (error) {
+          msg.className = "mensaje-detalle msg-err";
+          msg.textContent = "Error: " + error.message;
+        } else {
+          msg.className = "mensaje-detalle msg-ok";
+          msg.textContent = "✓ Líder digital actualizado";
+          // Actualizar mapa local
+          Object.assign(lider, updates);
+          mapaLideres[idCad] = lider;
+          filtrarInfo();
+        }
+        msg.style.display = "block";
+        setTimeout(() => (msg.style.display = "none"), 3000);
+      };
+
+      // ══════════════════════════════════════════════
+      // ══  MÓDULO OPERACIÓN
+      // ══════════════════════════════════════════════
+
+      let todosCADsOps = [];
+      let cadSelOps = null;
+      let mapaAperturasHoy = {};
+      let fotosApertura = [];
+
+      async function cargarOpsCADs() {
+        const { data } = await sb
+          .from("Lista_CADs")
+          .select("*")
+          .eq("REGION", regionActiva)
+          .order("ID CAD");
+        todosCADsOps = data || [];
+
+        // Verificar cuáles abrieron hoy
+        const hoy = getFechaHoy();
+        const cadIds = todosCADsOps.map((c) => c["ID CAD"]);
+        mapaAperturasHoy = {};
+        if (cadIds.length) {
+          const { data: aperturas } = await sb
+            .from("Apertura_CAD")
+            .select("cad_id")
+            .eq("fecha", hoy)
+            .in("cad_id", cadIds);
+          (aperturas || []).forEach((a) => {
+            mapaAperturasHoy[a.cad_id] = true;
+          });
+        }
+        filtrarOps();
+      }
+
+      window.filtrarOps = function () {
+        const buscar = document.getElementById("fo-buscar").value.toLowerCase();
+        const estado = document.getElementById("fo-estado").value;
+        const sub = document.getElementById("fo-sub").value;
+        const estadoDoc = document.getElementById("fo-estado-doc").value;
+        const abrio = document.getElementById("fo-abriohoy").value;
+
+        const filtered = todosCADsOps.filter((c) => {
+          const abrioBool = mapaAperturasHoy[c["ID CAD"]] ? "SI" : "NO";
+          const idCad = (c["ID CAD"] || "").toLowerCase();
+          return (
+            (!buscar || idCad.includes(buscar)) &&
+            (!estado || c["ESTADO_OPERACION"] === estado) &&
+            (!sub || c["SUBESTADO_OPERACION"] === sub) &&
+            (!estadoDoc || c["ESTADO_DOCUMENTACION"] === estadoDoc) &&
+            (!abrio || abrioBool === abrio)
+          );
+        });
+        renderTablaOps(filtered);
+      };
+
+      function renderTablaOps(lista) {
+        const tbody = document.getElementById("tabla-ops");
+        if (!lista.length) {
+          tbody.innerHTML =
+            '<tr><td colspan="5" class="empty">Sin CADs</td></tr>';
+          return;
+        }
+        tbody.innerHTML = lista
+          .map((c) => {
+            const abrio = mapaAperturasHoy[c["ID CAD"]];
+            const sel =
+              cadSelOps && cadSelOps["ID CAD"] === c["ID CAD"]
+                ? "selected"
+                : "";
+            const estDoc = c["ESTADO_DOCUMENTACION"] || "—";
+            const badgeDoc =
+              estDoc === "LOCAL OPERATIVO" ? "badge-abierta" : "badge-cerrada";
+            return `<tr class="clickable ${sel}" onclick="seleccionarCADOps('${
+              c["ID CAD"]
+            }')">
+            <td style="font-weight:600;color:#0c3b5e">${c["ID CAD"]}</td>
+            <td><span class="badge ${
+              c["ESTADO_OPERACION"] === "LOCAL ABIERTO"
+                ? "badge-abierta"
+                : "badge-cerrada"
+            }">${c["ESTADO_OPERACION"] || "—"}</span></td>
+            <td style="font-size:12px">${c["SUBESTADO_OPERACION"] || "—"}</td>
+            <td><span class="badge ${badgeDoc}">${estDoc}</span></td>
+            <td>${
+              abrio
+                ? '<span class="badge badge-abierta">✓ Sí</span>'
+                : '<span class="badge badge-cerrada">✗ No</span>'
+            }</td>
+          </tr>`;
+          })
+          .join("");
+      }
+
+      window.seleccionarCADOps = function (idCad) {
+        cadSelOps = todosCADsOps.find((c) => c["ID CAD"] === idCad);
+        if (!cadSelOps) return;
+
+        // Cambiar a vista detalle
+        document.getElementById("ops-vista-lista").style.display = "none";
+        document.getElementById("ops-vista-detalle").style.display = "block";
+        document.getElementById("ops-detalle-titulo").textContent = idCad;
+
+        // Estado operativo
+        document.getElementById("o-estado-op").value =
+          cadSelOps["ESTADO_OPERACION"] || "LOCAL ABIERTO";
+        document.getElementById("o-sub-estado").value =
+          cadSelOps["SUBESTADO_OPERACION"] || "";
+        document.getElementById("o-abrio-hoy").value = mapaAperturasHoy[idCad]
+          ? "✓ SÍ"
+          : "✗ NO";
+        document.getElementById("o-estado-yofc").value =
+          cadSelOps["ESTADO_DOCUMENTACION"] || "";
+        document.getElementById("o-etiqueta-infra").value =
+          cadSelOps["etiqueta_infra"] || "NO APLICA";
+
+        // Apertura
+        document.getElementById("o-ap-cad").value = idCad;
+        document.getElementById("o-ap-fecha").value = getFechaHoy();
+        fotosApertura = [];
+        document.getElementById("o-ap-preview").innerHTML = "";
+
+        // Mostrar primera tab
+        cambiarTabOps(
+          "estado",
+          document.querySelector("#ops-vista-detalle .tab-btn"),
+        );
+      };
+
+      window.cambiarTabOps = function (tab, btn) {
+        document
+          .querySelectorAll("#ops-vista-detalle .tab-content")
+          .forEach(function (p) {
+            p.style.display = "none";
+          });
+        document
+          .querySelectorAll("#ops-vista-detalle .tab-btn")
+          .forEach(function (b) {
+            b.classList.remove("activo");
+          });
+        document.getElementById("tab-ops-" + tab).style.display = "block";
+        if (btn) btn.classList.add("activo");
+        // Cargar seguimiento al abrir esa pestaña
+        if (tab === "seguimiento" && cadSelOps) {
+          calMesActual = new Date().getMonth();
+          calAnioActual = new Date().getFullYear();
+          document.getElementById("o-usuarios-reg").value = "Cargando...";
+          document.getElementById("o-dias-abiertos").value = "Cargando...";
+          document.getElementById("o-calendario").innerHTML =
+            "Cargando calendario...";
+          cargarSeguimientoOps(cadSelOps["ID CAD"]);
+        }
+        // Setear CAD y fecha al abrir pestaña apertura
+        if (tab === "apertura" && cadSelOps) {
+          document.getElementById("o-ap-cad").value = cadSelOps["ID CAD"];
+          if (!document.getElementById("o-ap-fecha").value) {
+            document.getElementById("o-ap-fecha").value = getFechaHoy();
+          }
+        }
+        // Cargar comentarios al abrir esa pestaña
+        if (tab === "comentarios" && cadSelOps) {
+          cargarComentarios(cadSelOps["ID CAD"]);
+        }
+      };
+
+      // Mes actual del calendario (para navegación)
+      var calMesActual = new Date().getMonth();
+      var calAnioActual = new Date().getFullYear();
+
+      window.navegarMesCal = function (dir) {
+        calMesActual += dir;
+        if (calMesActual > 11) {
+          calMesActual = 0;
+          calAnioActual++;
+        }
+        if (calMesActual < 0) {
+          calMesActual = 11;
+          calAnioActual--;
+        }
+        if (cadSelOps) cargarSeguimientoOps(cadSelOps["ID CAD"]);
+      };
+
+      async function cargarSeguimientoOps(idCad) {
+        // 1) Usuarios registrados
+        try {
+          const resp1 = await sb
+            .from("Visitantes")
+            .select("*", { count: "exact", head: true })
+            .eq("cad_id", idCad);
+          document.getElementById("o-usuarios-reg").value = resp1.count || 0;
+        } catch (e) {
+          document.getElementById("o-usuarios-reg").value = "Error";
+        }
+
+        // 2) Calendario del mes seleccionado
+        try {
+          const ahora = new Date();
+          const anio = calAnioActual;
+          const mes = calMesActual;
+          const diasMes = new Date(anio, mes + 1, 0).getDate();
+          const fechaRef = new Date(anio, mes, 1);
+          const nombreMes = fechaRef.toLocaleDateString("es-PE", {
+            month: "long",
+            year: "numeric",
+          });
+          const mesStr = String(mes + 1).padStart(2, "0");
+          const inicio = anio + "-" + mesStr + "-01";
+          const fin =
+            anio + "-" + mesStr + "-" + String(diasMes).padStart(2, "0");
+
+          // Actualizar título del calendario
+          document.getElementById("o-calendario-titulo").textContent =
+            nombreMes;
+
+          const resp2 = await sb
+            .from("Apertura_CAD")
+            .select("fecha, estado, fotos_estado")
+            .eq("cad_id", idCad)
+            .gte("fecha", inicio)
+            .lte("fecha", fin);
+          const datos = resp2.data || [];
+          const mapa = {};
+          const mapaFotos = {};
+          let diasAbiertos = 0;
+          datos.forEach(function (a) {
+            mapa[a.fecha] = a.estado;
+            mapaFotos[a.fecha] = a.fotos_estado;
+            if (a.estado === "abierto") diasAbiertos++;
+          });
+          document.getElementById("o-dias-abiertos").value = diasAbiertos;
+
+          // Render calendario
+          var diasSemana = ["D", "L", "M", "M", "J", "V", "S"];
+          var html = '<div class="cal-grid">';
+          diasSemana.forEach(function (d) {
+            html += '<div class="cal-header">' + d + "</div>";
+          });
+          var primerDia = new Date(anio, mes, 1).getDay();
+          for (var i = 0; i < primerDia; i++) html += "<div></div>";
+          for (var d = 1; d <= diasMes; d++) {
+            var fechaStr =
+              anio + "-" + mesStr + "-" + String(d).padStart(2, "0");
+            var estado = mapa[fechaStr];
+            var fotosEst = mapaFotos[fechaStr];
+            var diaSem = new Date(anio, mes, d).getDay();
+            var esFinSemana = diaSem === 0 || diaSem === 6;
+            var esFuturo = new Date(anio, mes, d) > ahora;
+            var cls = "";
+            var contenido = d;
+            if (estado === "abierto" && fotosEst === "pendiente_foto") {
+              cls = "pendiente-foto";
+              contenido = '<span class="cal-p">P</span>';
+            } else if (estado === "abierto") {
+              cls = "abierto";
+            } else if (estado === "cerrado") {
+              cls = "cerrado";
+            } else if (esFinSemana && !estado) {
+              cls = "finsemana";
+            } else if (esFuturo) {
+              cls = "futuro";
+            }
+            if (
+              esFinSemana &&
+              estado === "abierto" &&
+              fotosEst !== "pendiente_foto"
+            )
+              cls = "abierto";
+            html += '<div class="cal-day ' + cls + '">' + contenido + "</div>";
+          }
+          html += "</div>";
+          document.getElementById("o-calendario").innerHTML = html;
+        } catch (e) {
+          document.getElementById("o-dias-abiertos").value = "Error";
+          document.getElementById("o-calendario").innerHTML =
+            '<div style="color:#ef4444">Error: ' + e.message + "</div>";
+        }
+      }
+
+      window.guardarEstadoOp = async function () {
+        if (!cadSelOps) return;
+        const msg = document.getElementById("msg-estado-op");
+        const ahora = new Date().toLocaleString("es-PE", {
+          timeZone: "America/Lima",
+        });
+        const updates = {
+          ESTADO_OPERACION: document.getElementById("o-estado-op").value,
+          SUBESTADO_OPERACION: document.getElementById("o-sub-estado").value,
+          ESTADO_DOCUMENTACION: document.getElementById("o-estado-yofc").value,
+          etiqueta_infra: document.getElementById("o-etiqueta-infra").value,
+        };
+        const { error } = await sb
+          .from("Lista_CADs")
+          .update(updates)
+          .eq("ID CAD", cadSelOps["ID CAD"]);
+        if (error) {
+          msg.className = "mensaje-detalle msg-err";
+          msg.textContent = "Error: " + error.message;
+        } else {
+          msg.className = "mensaje-detalle msg-ok";
+          msg.textContent = "✓ Estado actualizado";
+          const idx = todosCADsOps.findIndex(
+            (c) => c["ID CAD"] === cadSelOps["ID CAD"],
+          );
+          if (idx > -1) Object.assign(todosCADsOps[idx], updates);
+          filtrarOps();
+        }
+        msg.style.display = "block";
+        setTimeout(() => (msg.style.display = "none"), 3000);
+      };
+
+      // ── FOTOS APERTURA ──
+      // ── CONFIGURACIÓN FOTOS ──
+      const APPS_SCRIPT_URL =
+        "https://script.google.com/macros/s/AKfycbzzUvs-ZY8wNzHeyGxrzPlVHgiJOx056yTYfOP1SxS87AvHbqUMTKxI91dGGJbum8WNOg/exec";
+
+      // Optimizar imagen: redimensionar y comprimir
+      function optimizarImagen(file, maxAncho = 800, calidad = 0.7) {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const img = new Image();
+            img.onload = function () {
+              const canvas = document.createElement("canvas");
+              let ancho = img.width;
+              let alto = img.height;
+
+              if (ancho > maxAncho) {
+                alto = Math.round((alto * maxAncho) / ancho);
+                ancho = maxAncho;
+              }
+
+              canvas.width = ancho;
+              canvas.height = alto;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0, ancho, alto);
+
+              canvas.toBlob(
+                function (blob) {
+                  const base64 = canvas.toDataURL("image/jpeg", calidad);
+                  const base64Data = base64.split(",")[1];
+
+                  resolve({
+                    blob: blob,
+                    base64: base64Data,
+                    mimeType: "image/jpeg",
+                    anchoOriginal: img.width,
+                    altoOriginal: img.height,
+                    anchoFinal: ancho,
+                    altoFinal: alto,
+                  });
+                },
+                "image/jpeg",
+                calidad,
+              );
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      // ── Subir fotos a Google Drive via Apps Script ──
+      async function subirFotosGoogleDrive(
+        cadId,
+        fecha,
+        fotosOptimizadas,
+        msg,
+      ) {
+        var regionUsuario = regionActiva || userProfile.region || "SIN_REGION";
+
+        var fotosPayload = fotosOptimizadas.map(function (f) {
+          return { nombre: f.nombre, base64: f.base64, mimeType: f.mimeType };
+        });
+
+        var payload = {
+          cadId: cadId,
+          region: regionUsuario,
+          fecha: fecha,
+          fotos: fotosPayload,
+        };
+
+        msg.textContent =
+          "⏳ Enviando " +
+          fotosOptimizadas.length +
+          " foto(s) a Google Drive...";
+
+        // Usar formulario oculto + iframe (evita CORS)
+        var iframeId = "upload-iframe-" + Date.now();
+        var iframe = document.createElement("iframe");
+        iframe.name = iframeId;
+        iframe.style.display = "none";
+        document.body.appendChild(iframe);
+
+        var uploadDone = new Promise(function (resolve, reject) {
+          var timeout = setTimeout(function () {
+            limpiarFormIframe();
+            reject(
+              new Error("Timeout: no se recibió respuesta en 90 segundos"),
+            );
+          }, 90000);
+
+          iframe.onload = function () {
+            clearTimeout(timeout);
+            // Dar tiempo al script de procesar
+            setTimeout(function () {
+              limpiarFormIframe();
+              resolve();
+            }, 2000);
+          };
+
+          iframe.onerror = function () {
+            clearTimeout(timeout);
+            limpiarFormIframe();
+            reject(new Error("Error de conexión con Google Drive"));
+          };
+        });
+
+        var form = document.createElement("form");
+        form.method = "POST";
+        form.action = APPS_SCRIPT_URL;
+        form.target = iframeId;
+        form.style.display = "none";
+
+        var input = document.createElement("textarea");
+        input.name = "payload";
+        input.value = JSON.stringify(payload);
+        form.appendChild(input);
+
+        document.body.appendChild(form);
+
+        function limpiarFormIframe() {
+          try {
+            document.body.removeChild(iframe);
+          } catch (e) {}
+          try {
+            document.body.removeChild(form);
+          } catch (e) {}
+        }
+
+        form.submit();
+        await uploadDone;
+
+        return [];
+      }
+
+      window.previewFotos = function (input) {
+        const files = Array.from(input.files).slice(0, 4);
+        fotosApertura = files;
+        const preview = document.getElementById("o-ap-preview");
+        preview.innerHTML = "";
+        files.forEach((f, i) => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            preview.innerHTML += `<div class="foto-item">
+              <img src="${e.target.result}" class="foto-thumb" />
+              <button class="foto-remove" onclick="removeFoto(${i})">✕</button>
+            </div>`;
+          };
+          reader.readAsDataURL(f);
+        });
+      };
+
+      window.removeFoto = function (idx) {
+        fotosApertura.splice(idx, 1);
+        const input = document.getElementById("o-ap-fotos-input");
+        const dt = new DataTransfer();
+        fotosApertura.forEach((f) => dt.items.add(f));
+        input.files = dt.files;
+        previewFotos(input);
+      };
+
+      window.registrarApertura = async function () {
+        var cadId = cadSelOps ? cadSelOps["ID CAD"] : "";
+        var fecha = document.getElementById("o-ap-fecha").value;
+        var msg = document.getElementById("msg-apertura");
+        msg.style.display = "none";
+
+        if (!cadId) {
+          msg.className = "mensaje-detalle msg-err";
+          msg.textContent = "No hay CAD seleccionado";
+          msg.style.display = "block";
+          return;
+        }
+        if (!fecha) {
+          msg.className = "mensaje-detalle msg-err";
+          msg.textContent = "Selecciona una fecha";
+          msg.style.display = "block";
+          return;
+        }
+        if (!fotosApertura.length) {
+          msg.className = "mensaje-detalle msg-err";
+          msg.textContent = "Debes subir al menos 1 foto";
+          msg.style.display = "block";
+          return;
+        }
+        if (fotosApertura.length > 4) {
+          msg.className = "mensaje-detalle msg-err";
+          msg.textContent = "Máximo 4 fotos";
+          msg.style.display = "block";
+          return;
+        }
+
+        var metodo = "Google Drive";
+        msg.className = "mensaje-detalle msg-ok";
+        msg.textContent = "⏳ Optimizando fotos...";
+        msg.style.display = "block";
+
+        try {
+          // 1) Optimizar todas las fotos
+          var fotosOptimizadas = [];
+          for (var i = 0; i < fotosApertura.length; i++) {
+            var file = fotosApertura[i];
+            var optimizada = await optimizarImagen(file, 800, 0.7);
+            var nombreArchivo =
+              cadId.replace(/[^a-zA-Z0-9_-]/g, "_") +
+              "_apertura_" +
+              fecha +
+              "_" +
+              (i + 1) +
+              ".jpg";
+            fotosOptimizadas.push({
+              nombre: nombreArchivo,
+              blob: optimizada.blob,
+              base64: optimizada.base64,
+              mimeType: "image/jpeg",
+            });
+            msg.textContent =
+              "⏳ Optimizando foto " +
+              (i + 1) +
+              "/" +
+              fotosApertura.length +
+              " (" +
+              optimizada.anchoOriginal +
+              "×" +
+              optimizada.altoOriginal +
+              " → " +
+              optimizada.anchoFinal +
+              "×" +
+              optimizada.altoFinal +
+              ")";
+          }
+
+          // 2) Subir fotos a Google Drive
+          msg.textContent = "⏳ Subiendo a Google Drive...";
+          await subirFotosGoogleDrive(cadId, fecha, fotosOptimizadas, msg);
+
+          // 3) Verificar si ya existe registro pendiente_foto para esta fecha
+          var { data: existente } = await sb
+            .from("Apertura_CAD")
+            .select("id, fotos_estado")
+            .eq("cad_id", cadId)
+            .eq("fecha", fecha)
+            .maybeSingle();
+
+          if (existente && existente.fotos_estado === "pendiente_foto") {
+            // Actualizar registro existente (carga histórica)
+            var updateResp = await sb
+              .from("Apertura_CAD")
+              .update({
+                fotos_estado: "pendiente",
+                fotos_cantidad: fotosOptimizadas.length,
+              })
+              .eq("id", existente.id);
+            if (updateResp.error) {
+              throw new Error(
+                "Error actualizando Apertura_CAD: " + updateResp.error.message,
+              );
+            }
+          } else if (!existente) {
+            // Insertar nuevo registro
+            var insertResp = await sb.from("Apertura_CAD").insert({
+              cad_id: cadId,
+              fecha: fecha,
+              estado: "abierto",
+              fotos_estado: "pendiente",
+              fotos_cantidad: fotosOptimizadas.length,
+            });
+            if (insertResp.error) {
+              throw new Error(
+                "Error en Apertura_CAD: " + insertResp.error.message,
+              );
+            }
+          } else {
+            // Ya existe con foto subida
+            throw new Error(
+              "Ya existe un registro de apertura para esta fecha",
+            );
+          }
+
+          // 4) Éxito inmediato — confirmación en segundo plano
+          msg.className = "mensaje-detalle msg-ok";
+          msg.innerHTML =
+            "✅ Apertura registrada — " +
+            fotosOptimizadas.length +
+            " foto(s) enviadas a Google Drive. Confirmando...";
+          msg.style.display = "block";
+
+          mapaAperturasHoy[cadId] = true;
+          fotosApertura = [];
+          document.getElementById("o-ap-preview").innerHTML = "";
+          cargarSeguimientoOps(cadId);
+          cargarKPIs();
+
+          // Confirmar en segundo plano (no bloquea al usuario)
+          (async function confirmarEnBackground() {
+            for (var intento = 0; intento < 15; intento++) {
+              await new Promise((r) => setTimeout(r, 2000));
+              try {
+                var { data: check } = await sb
+                  .from("Apertura_CAD")
+                  .select("fotos_estado, fotos_url")
+                  .eq("cad_id", cadId)
+                  .eq("fecha", fecha)
+                  .single();
+
+                if (check && check.fotos_estado === "confirmado") {
+                  msg.innerHTML =
+                    "✅ Fotos confirmadas en Google Drive. " +
+                    (check.fotos_url
+                      ? '<a href="' +
+                        check.fotos_url +
+                        '" target="_blank" style="color:#065f46;font-weight:600;text-decoration:underline;">Ver carpeta ↗</a>'
+                      : "");
+                  setTimeout(function () {
+                    msg.style.display = "none";
+                  }, 5000);
+                  return;
+                }
+              } catch (e) {}
+            }
+            msg.innerHTML =
+              "⚠️ Fotos enviadas pero sin confirmación automática. " +
+              '<a href="https://drive.google.com/drive/folders/1WTztMhj28NCYrUagI-76jsMEY3cIsw8c" target="_blank" style="color:#92400e;font-weight:600;text-decoration:underline;">Verificar manualmente ↗</a>';
+            setTimeout(function () {
+              msg.style.display = "none";
+            }, 8000);
+          })();
+        } catch (e) {
+          msg.className = "mensaje-detalle msg-err";
+          msg.textContent = "❌ " + e.message;
+        }
+      };
+
+      window.volverListaOps = function () {
+        document.getElementById("ops-vista-detalle").style.display = "none";
+        document.getElementById("ops-vista-lista").style.display = "block";
+        cargarOpsCADs();
+      };
+
+      // ══════════════════════════════════════════════
+      // ══  COMENTARIOS
+      // ══════════════════════════════════════════════
+
+      var todosComentarios = [];
+
+      async function cargarComentarios(idCad) {
+        document.getElementById("o-com-cad-nombre").textContent = idCad;
+        document.getElementById("o-com-texto").value = "";
+
+        var resp = await sb
+          .from("Comentarios")
+          .select("*")
+          .eq("cad_id", idCad)
+          .order("fecha_registro", { ascending: false });
+
+        todosComentarios = resp.data || [];
+        renderComentarios();
+      }
+
+      function renderComentarios() {
+        var tbody = document.getElementById("tabla-comentarios");
+        if (!todosComentarios.length) {
+          tbody.innerHTML =
+            '<tr><td colspan="4" class="empty">Sin comentarios</td></tr>';
+          return;
+        }
+        var hoy = getFechaHoy();
+        var userId = userProfile ? userProfile.id : "";
+
+        tbody.innerHTML = todosComentarios
+          .map(function (c) {
+            var fechaLocal = c.fecha_registro
+              ? new Date(c.fecha_registro)
+              : null;
+            var fechaReg = fechaLocal
+              ? `${fechaLocal.getFullYear()}-${String(fechaLocal.getMonth() + 1).padStart(2, "0")}-${String(fechaLocal.getDate()).padStart(2, "0")}`
+              : "";
+            var fechaDD = formatFechaDDMMYY(fechaReg);
+            var esHoy = fechaReg === hoy;
+            var puedeEditar = esHoy;
+            var acciones = "";
+            if (puedeEditar) {
+              acciones =
+                '<button class="btn-editar-com" onclick="editarComentario(\'' +
+                c.id +
+                "')\">✏️ Editar</button> " +
+                '<button class="btn-editar-com" style="background:#fee2e2;color:#dc2626" onclick="eliminarComentario(\'' +
+                c.id +
+                "')\">🗑️ Eliminar</button>";
+            }
+
+            return (
+              '<tr id="com-row-' +
+              c.id +
+              '">' +
+              '<td style="font-size:12px;color:#64748b;white-space:nowrap">' +
+              fechaDD +
+              "</td>" +
+              '<td style="font-weight:600;font-size:12px">' +
+              (c.autor || "—") +
+              "</td>" +
+              '<td id="com-text-' +
+              c.id +
+              '" style="font-size:13px">' +
+              (c.comentario || "") +
+              "</td>" +
+              "<td>" +
+              acciones +
+              "</td>" +
+              "</tr>"
+            );
+          })
+          .join("");
+      }
+
+      window.guardarComentario = async function () {
+        if (!cadSelOps) {
+          showToast("Selecciona un CAD primero", "err");
+          return;
+        }
+        var texto = document.getElementById("o-com-texto").value.trim();
+        if (!texto) {
+          showToast("Escribe un comentario", "err");
+          return;
+        }
+
+        var msg = document.getElementById("msg-comentario");
+        var nombre =
+          (userProfile.nombres || "") + " " + (userProfile.apellidos || "");
+
+        var resp = await sb.from("Comentarios").insert({
+          cad_id: cadSelOps["ID CAD"],
+          tipo: "COORDINADOR",
+          comentario: texto,
+          autor: nombre.trim(),
+          autor_id: userProfile.id,
+        });
+
+        if (resp.error) {
+          msg.className = "mensaje-detalle msg-err";
+          msg.textContent = "Error: " + resp.error.message;
+          msg.style.display = "block";
+        } else {
+          msg.className = "mensaje-detalle msg-ok";
+          msg.textContent = "✓ Comentario guardado";
+          msg.style.display = "block";
+          document.getElementById("o-com-texto").value = "";
+          await cargarComentarios(cadSelOps["ID CAD"]);
+        }
+        setTimeout(function () {
+          msg.style.display = "none";
+        }, 3000);
+      };
+
+      window.editarComentario = function (id) {
+        var com = todosComentarios.find(function (c) {
+          return c.id === id;
+        });
+        if (!com) return;
+
+        var td = document.getElementById("com-text-" + id);
+        var row = document.getElementById("com-row-" + id);
+        var accionTd = row.querySelector("td:last-child");
+
+        td.classList.add("com-editando");
+        td.innerHTML = "<textarea>" + (com.comentario || "") + "</textarea>";
+        td.querySelector("textarea").focus();
+
+        accionTd.innerHTML =
+          '<button class="btn-guardar-com" onclick="guardarEdicion(\'' +
+          id +
+          "')\">💾</button> " +
+          '<button class="btn-cancelar-com" onclick="cancelarEdicion(\'' +
+          id +
+          "')\">✕</button>";
+      };
+
+      window.guardarEdicion = async function (id) {
+        var td = document.getElementById("com-text-" + id);
+        var textarea = td.querySelector("textarea");
+        if (!textarea) return;
+        var nuevoTexto = textarea.value.trim();
+        if (!nuevoTexto) {
+          showToast("El comentario no puede estar vacío", "err");
+          return;
+        }
+
+        var resp = await sb
+          .from("Comentarios")
+          .update({ comentario: nuevoTexto })
+          .eq("id", id);
+
+        if (resp.error) {
+          showToast("Error: " + resp.error.message, "err");
+        } else {
+          showToast("✓ Comentario actualizado");
+          await cargarComentarios(cadSelOps["ID CAD"]);
+        }
+      };
+
+      window.eliminarComentario = async function (id) {
+        if (!confirm("¿Estás seguro de eliminar este comentario?")) return;
+        var resp = await sb.from("Comentarios").delete().eq("id", id);
+        if (resp.error) {
+          showToast("Error: " + resp.error.message, "err");
+        } else {
+          showToast("✓ Comentario eliminado");
+          await cargarComentarios(cadSelOps["ID CAD"]);
+        }
+      };
+
+      // ── TOGGLE DETALLE ──
+      window.toggleDetalle = function (id) {
+        document.getElementById(id).classList.toggle("abierto");
+      };
+
+      // ── ACTUALIZAR cargarTodo ──
+      const _cargarTodoOriginal = cargarTodo;
+      cargarTodo = async function () {
+        await _cargarTodoOriginal();
+        // Resetear vistas al cambiar región
+        document.getElementById("info-vista-lista").style.display = "block";
+        document.getElementById("info-vista-detalle").style.display = "none";
+        document.getElementById("ops-vista-lista").style.display = "block";
+        document.getElementById("ops-vista-detalle").style.display = "none";
+        cadSelInfo = null;
+        cadSelOps = null;
+      };
+
+      async function cargarVisitasCoord() {
+        const cadIds = cadsRegion.map((c) => c["ID CAD"]);
+        if (!cadIds.length) {
+          document.getElementById("tabla-asist").innerHTML =
+            '<tr><td colspan="10" class="empty">Sin CADs en esta región</td></tr>';
+          return;
+        }
+
+        // Si no hay fecha seleccionada, cargar mes actual
+        const ahora = new Date();
+        const iniMes = `${ahora.getFullYear()}-${String(
+          ahora.getMonth() + 1,
+        ).padStart(2, "0")}-01`;
+        const usarFecha = fechaFiltroAsist || "";
+        const esMes = !usarFecha;
+
+        // Actualizar título
+        if (esMes) {
+          const nombreMes = ahora.toLocaleDateString("es-PE", {
+            month: "long",
+            year: "numeric",
+          });
+          document.getElementById("asist-titulo").textContent =
+            "Registro de Visitas — " +
+            nombreMes.charAt(0).toUpperCase() +
+            nombreMes.slice(1);
+        } else if (usarFecha === getFechaHoy()) {
+          document.getElementById("asist-titulo").textContent =
+            "Registro de Visitas — Hoy";
+        } else {
+          document.getElementById("asist-titulo").textContent =
+            "Registro de Visitas — " + formatFechaTitulo(usarFecha);
+        }
+
+        let query = sb
+          .from("Visitantes")
+          .select("*, Asistentes!inner(nombres,apellidos,dni,edad)")
+          .in("cad_id", cadIds);
+
+        if (esMes) {
+          query = query.gte("fecha_visita", iniMes);
+        } else {
+          query = query.eq("fecha_visita", usarFecha);
+        }
+
+        const { data, error } = await query.order("hora_entrada", {
+          ascending: false,
+        });
+
+        if (error) {
+          showToast("Error: " + error.message, "err");
+          return;
+        }
+        todasVisitas = data || [];
+        primeraCargaAsist = false;
+        filtrarAsist();
+      }
+
+      window.cambiarFechaAsist = function () {
+        const val = document.getElementById("fa-fecha").value;
+        if (val) {
+          fechaFiltroAsist = val;
+          cargarVisitasCoord();
+        }
+      };
+
+      window.filtrarAsist = function () {
+        const cad = document.getElementById("fa-cad").value;
+        const buscar = document.getElementById("fa-buscar").value.toLowerCase();
+        const estado = document.getElementById("fa-estado").value;
+
+        const filtered = todasVisitas.filter((v) => {
+          const a = v.Asistentes || {};
+          const texto = (
+            (a.dni || "") +
+            (a.nombres || "") +
+            (a.apellidos || "")
+          ).toLowerCase();
+          return (
+            (!cad || v.cad_id === cad) &&
+            (!buscar || texto.includes(buscar)) &&
+            (!estado || v.estado_visita === estado)
+          );
+        });
+        renderTablaAsist(filtered);
+      };
+
+      function renderTablaAsist(lista) {
+        const tbody = document.getElementById("tabla-asist");
+        if (!lista.length) {
+          tbody.innerHTML =
+            '<tr><td colspan="10" class="empty">Sin visitas registradas para esta fecha</td></tr>';
+          return;
+        }
+        const ahora = new Date();
+        const esHoy = fechaFiltroAsist === getFechaHoy();
+
+        tbody.innerHTML = lista
+          .map((v) => {
+            const a = v.Asistentes || {};
+            const fechaDD = formatFechaDDMMYY(v.fecha_visita);
+            const horaE = v.hora_entrada?.substring(0, 5) || "—";
+            const horaS = v.hora_salida?.substring(0, 5) || "—";
+            const esAbierta = v.estado_visita === "ABIERTA";
+
+            let duracion = "—";
+            if (v.duracion_min) {
+              duracion = v.duracion_min + " min";
+            } else if (
+              esAbierta &&
+              v.fecha_visita === getFechaHoy() &&
+              v.hora_entrada
+            ) {
+              const [h, m] = v.hora_entrada.split(":").map(Number);
+              const mins = Math.max(
+                0,
+                ahora.getHours() * 60 + ahora.getMinutes() - (h * 60 + m),
+              );
+              duracion =
+                mins < 60
+                  ? mins + " min"
+                  : Math.floor(mins / 60) + "h " + (mins % 60) + "m";
+            }
+
+            // Nombre corto del CAD
+            const cadLabel = v.cad_id || "—";
+
+            return `<tr>
+            <td style="font-size:12px;color:#64748b">${fechaDD}</td>
+            <td style="font-weight:600;color:#0c3b5e;font-size:11px">${cadLabel}</td>
+            <td>${horaE}</td>
+            <td>${horaS}</td>
+            <td style="font-weight:600;color:#0c3b5e">${a.dni || "—"}</td>
+            <td style="font-weight:600">${a.nombres || "—"}</td>
+            <td>${a.apellidos || "—"}</td>
+            <td>${duracion}</td>
+            <td>${
+              esAbierta
+                ? '<span class="badge badge-abierta">Abierta</span>'
+                : '<span class="badge badge-cerrada">Cerrada</span>'
+            }</td>
+            <td>${
+              esAbierta
+                ? `<button class="btn-cerrar-v" onclick="cerrarVisita('${v.id}')">Cerrar</button>`
+                : ""
+            }</td>
+          </tr>`;
+          })
+          .join("");
+      }
+
+      // ── CERRAR VISITA ──
+      window.cerrarVisita = async function (id) {
+        const hora = getHoraActual();
+        const visita = todasVisitas.find((v) => v.id === id);
+        let duracion = null;
+        if (visita?.hora_entrada) {
+          const [h1, m1] = visita.hora_entrada.split(":").map(Number);
+          const [h2, m2] = hora.split(":").map(Number);
+          duracion = Math.max(0, h2 * 60 + m2 - (h1 * 60 + m1));
+        }
+        const { error } = await sb
+          .from("Visitantes")
+          .update({
+            estado_visita: "CERRADA",
+            hora_salida: hora,
+            duracion_min: duracion,
+          })
+          .eq("id", id);
+        if (error) {
+          showToast("Error: " + error.message, "err");
+          return;
+        }
+        showToast("✅ Visita cerrada");
+        await cargarVisitasCoord();
+      };
+
+      // ── PANEL: NUEVO VISITANTE ──
+      window.abrirPanel = function () {
+        resetPanel();
+        document.getElementById("panel-overlay").classList.add("show");
+        document.getElementById("panel").classList.add("show");
+      };
+
+      window.cerrarPanel = function () {
+        document.getElementById("panel-overlay").classList.remove("show");
+        document.getElementById("panel").classList.remove("show");
+        resetPanel();
+      };
+
+      function resetPanel() {
+        asistenteSel = null;
+        servicioSel = null;
+        document.getElementById("p-dni").value = "";
+        document.getElementById("p-nombre-buscar").value = "";
+        document.getElementById("p-nombre-resultados").style.display = "none";
+        document.getElementById("p-result").style.display = "none";
+        document.getElementById("p-form-nuevo").style.display = "none";
+        document.getElementById("p-servicio-section").style.display = "none";
+        document.getElementById("p-btn-guardar").disabled = true;
+        document.getElementById("p-profesion").value = "";
+        document
+          .querySelectorAll(".srv-opt")
+          .forEach((o) => o.classList.remove("active"));
+      }
+
+      // ── BUSCAR POR NOMBRE ──
+      window.buscarNombre = async function () {
+        const texto = document.getElementById("p-nombre-buscar").value.trim();
+        if (!texto || texto.length < 3) {
+          showToast("Ingresa al menos 3 caracteres", "err");
+          return;
+        }
+        const container = document.getElementById("p-nombre-resultados");
+        container.style.display = "block";
+        container.innerHTML =
+          '<div style="padding:8px;color:#64748b;font-size:12px">Buscando...</div>';
+
+        const cadSel = document.getElementById("p-cad").value;
+        const { data, error } = await sb
+          .from("Asistentes")
+          .select("*")
+          .or("nombres.ilike.%" + texto + "%,apellidos.ilike.%" + texto + "%")
+          .limit(50);
+
+        if (error || !data || data.length === 0) {
+          container.innerHTML =
+            '<div style="padding:8px;color:#ef4444;font-size:12px">No se encontraron resultados</div>';
+          return;
+        }
+
+        // Filtrar: solo los de este CAD o sin CAD asignado
+        const filtrados = cadSel
+          ? data.filter((a) => !a.cad_origen || a.cad_origen === cadSel)
+          : data.filter((a) => !a.cad_origen);
+
+        if (filtrados.length === 0) {
+          container.innerHTML =
+            '<div style="padding:8px;color:#ef4444;font-size:12px">No se encontraron resultados para este CAD</div>';
+          return;
+        }
+
+        let html = "";
+        filtrados.slice(0, 15).forEach(function (a) {
+          html +=
+            '<div style="padding:8px 10px;border-bottom:1px solid #e2e8f0;cursor:pointer;font-size:12px;transition:background 0.15s;"' +
+            " onclick=\"seleccionarAsistente('" +
+            a.id +
+            "')\"" +
+            " onmouseover=\"this.style.background='#f1f5f9'\" onmouseout=\"this.style.background='transparent'\">" +
+            "<strong>" +
+            a.nombres +
+            " " +
+            a.apellidos +
+            "</strong>" +
+            '<br><span style="color:#64748b;font-size:11px">DNI: ' +
+            (a.dni || "—") +
+            " · " +
+            (a.genero || "—") +
+            " · Cel: " +
+            (a.celular || "—") +
+            "</span>" +
+            "</div>";
+        });
+        container.innerHTML = html;
+      };
+
+      window.seleccionarAsistente = async function (id) {
+        const { data } = await sb
+          .from("Asistentes")
+          .select("*")
+          .eq("id", id)
+          .single();
+        if (!data) return;
+        asistenteSel = data;
+        document.getElementById("p-dni").value = data.dni || "";
+        document.getElementById("p-nombre-resultados").style.display = "none";
+        const res = document.getElementById("p-result");
+        res.className = "p-result p-found";
+        res.style.display = "block";
+        res.innerHTML =
+          "<strong>✅ " +
+          data.nombres +
+          " " +
+          data.apellidos +
+          "</strong>" +
+          '<br><span style="font-size:11px;opacity:0.8">DNI: ' +
+          (data.dni || "—") +
+          " · " +
+          (data.genero || "—") +
+          " · " +
+          (data.edad || "—") +
+          " años</span>";
+        document.getElementById("p-form-nuevo").style.display = "none";
+        document.getElementById("p-servicio-section").style.display = "block";
+      };
+
+      window.buscarDNI = async function () {
+        const dni = document.getElementById("p-dni").value.trim();
+        if (!dni) return;
+        const result = document.getElementById("p-result");
+        const cadSel = document.getElementById("p-cad").value;
+        const { data } = await sb
+          .from("Asistentes")
+          .select("*")
+          .eq("dni", dni)
+          .maybeSingle();
+        if (data) {
+          // Verificar si pertenece a otro CAD
+          if (data.cad_origen && cadSel && data.cad_origen !== cadSel) {
+            asistenteSel = null;
+            result.className = "p-result p-notfound";
+            result.innerHTML =
+              "🚫 <strong>Este asistente pertenece a otro CAD.</strong>";
+            result.style.display = "block";
+            document.getElementById("p-form-nuevo").style.display = "none";
+            document.getElementById("p-servicio-section").style.display =
+              "none";
+            return;
+          }
+          asistenteSel = data;
+          result.className = "p-result p-found";
+          result.innerHTML = `<strong>✓ Encontrado:</strong> ${data.nombres} ${data.apellidos}`;
+          document.getElementById("p-form-nuevo").style.display = "none";
+          document.getElementById("p-servicio-section").style.display = "block";
+        } else {
+          asistenteSel = null;
+          result.className = "p-result p-notfound";
+          result.innerHTML =
+            "⚠️ No encontrado. Completa los datos para registrar nuevo asistente.";
+          document.getElementById("p-form-nuevo").style.display = "block";
+          document.getElementById("p-servicio-section").style.display = "block";
+        }
+        result.style.display = "block";
+      };
+
+      window.selSrv = function (el, srv) {
+        document
+          .querySelectorAll(".srv-opt")
+          .forEach((o) => o.classList.remove("active"));
+        el.classList.add("active");
+        servicioSel = srv;
+        // Habilitar guardar si tiene CAD seleccionado
+        const cadSel = document.getElementById("p-cad").value;
+        document.getElementById("p-btn-guardar").disabled = !cadSel;
+      };
+
+      window.guardarVisita = async function () {
+        const cadSel = document.getElementById("p-cad").value;
+        if (!cadSel) {
+          showToast("⚠️ Selecciona un CAD", "err");
+          return;
+        }
+        if (!servicioSel) {
+          showToast("⚠️ Selecciona un servicio", "err");
+          return;
+        }
+
+        const btn = document.getElementById("p-btn-guardar");
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Guardando...';
+
+        try {
+          if (!asistenteSel) {
+            const nombres = document.getElementById("p-nombres").value.trim();
+            const apellidos = document
+              .getElementById("p-apellidos")
+              .value.trim();
+            const genero = document.getElementById("p-genero").value;
+            const edad =
+              parseInt(document.getElementById("p-edad").value) || null;
+            const celular =
+              document.getElementById("p-celular").value.trim() || "NO TIENE";
+            const discap =
+              document.getElementById("p-discapacidad").value === "true";
+            const profesion =
+              document.getElementById("p-profesion").value.trim() || null;
+
+            if (!nombres || !apellidos)
+              throw new Error("Nombres y apellidos obligatorios");
+            if (!genero) throw new Error("Selecciona género");
+
+            const { data, error } = await sb
+              .from("Asistentes")
+              .insert({
+                dni: document.getElementById("p-dni").value.trim(),
+                nombres: nombres.toUpperCase(),
+                apellidos: apellidos.toUpperCase(),
+                genero,
+                edad,
+                celular,
+                discapacidad: discap,
+                profesion_oficio: profesion ? profesion.toUpperCase() : null,
+                fecha_registro: new Date().toISOString(),
+                cad_origen: cadSel,
+              })
+              .select()
+              .single();
+            if (error) throw error;
+            asistenteSel = data;
+          }
+
+          // Si el asistente no tiene cad_origen, asignar este CAD
+          if (!asistenteSel.cad_origen) {
+            await sb
+              .from("Asistentes")
+              .update({ cad_origen: cadSel })
+              .eq("id", asistenteSel.id);
+          }
+
+          const { error: vErr } = await sb.from("Visitantes").insert({
+            asistente_id: asistenteSel.id,
+            cad_id: cadSel,
+            lider_id: userProfile.id,
+            fecha_visita: getFechaHoy(),
+            hora_entrada: getHoraActual(),
+            servicio: servicioSel,
+            estado_visita: "ABIERTA",
+            fecha_registro: new Date().toISOString(),
+          });
+          if (vErr) throw vErr;
+
+          showToast(
+            `✅ Entrada: ${asistenteSel.nombres} ${asistenteSel.apellidos} en ${cadSel}`,
+          );
+          cerrarPanel();
+          await cargarVisitasCoord();
+        } catch (e) {
+          showToast("❌ " + e.message, "err");
+          btn.disabled = false;
+          btn.innerHTML = "🚪 Registrar entrada";
+        }
+      };
+
+      // ══════════════════════════════════════════════
+      // ══  GENERAR ACTA EXCEL — Descarga plantilla de Supabase y rellena datos
+      // ══════════════════════════════════════════════════════════════════════
+
+      var PLANTILLA_BASE_URL =
+        "https://mjdckpytvczelqmdzixz.supabase.co/storage/v1/object/public/Plantillas%20CAD/";
+
+      window.generarActaPDF = async function () {
+        if (!cadSelInfo) {
+          showToast("Selecciona un CAD primero", "err");
+          return;
+        }
+
+        if (typeof ExcelJS === "undefined") {
+          showToast(
+            "❌ Error: librería ExcelJS no cargó. Recarga la página.",
+            "err",
+          );
+          return;
+        }
+
+        try {
+          var c = cadSelInfo;
+          var lider = mapaLideres ? mapaLideres[c["ID CAD"]] : null;
+          var region = c["REGION"] || regionActiva || "";
+          var tipoCAD = (c["ID CAD"] || "").includes("CAD A") ? "A" : "B";
+
+          showToast("⏳ Descargando plantilla Tipo " + tipoCAD + "...");
+
+          var plantillaURL =
+            PLANTILLA_BASE_URL +
+            (tipoCAD === "A"
+              ? "plantilla_CAD_TipoA.xlsx"
+              : "plantilla_CAD_TipoB.xlsx");
+
+          var resp = await fetch(plantillaURL);
+          if (!resp.ok) throw new Error("No se pudo descargar la plantilla");
+          var arrayBuffer = await resp.arrayBuffer();
+
+          var wb = new ExcelJS.Workbook();
+          await wb.xlsx.load(arrayBuffer);
+          var ws = wb.worksheets[0];
+
+          // Sección 1 — Info General
+          var tipoTexto =
+            tipoCAD === "A"
+              ? "Tipo A ( X ) Tipo B (   )"
+              : "Tipo A (   ) Tipo B ( X )";
+          ws.getCell("C6").value = tipoTexto;
+          ws.getCell("C7").value = c["ID CAD"] || "";
+          ws.getCell("J7").value = c["latitud"] || "";
+          ws.getCell("C8").value = c["DIRECCIÓN"] || c["DIRECCION"] || "";
+          ws.getCell("J8").value = c["longitud"] || "";
+          ws.getCell("C9").value = c["distrito"] || "";
+          ws.getCell("G9").value = c["provincia"] || "";
+          ws.getCell("K9").value = region;
+
+          // Sección 2 — Líder digital
+          var lNombre = lider
+            ? ((lider.nombres || "") + " " + (lider.apellidos || "")).trim()
+            : "";
+          var lDNI = lider ? lider.dni || "" : "";
+          var lGenero = lider ? lider.genero || "" : "";
+          var lEdad = lider ? lider.edad || "" : "";
+          var lLocalidad = lider ? lider.localidad_origen || "" : "";
+          var lTelefono = lider ? lider.celular_usuario || "" : "";
+          var lDomicilio = lider ? lider.domicilio || "" : "";
+          var lCargo = lider ? lider.cargo_profesion || "" : "";
+          var lCorreo = lider ? lider.correo || "" : "";
+
+          ws.getCell("C13").value = lNombre;
+          ws.getCell("J13").value = lDNI;
+          ws.getCell("C14").value = lGenero;
+          ws.getCell("J14").value = lEdad;
+          ws.getCell("C15").value = lLocalidad;
+          ws.getCell("J15").value = lTelefono;
+          ws.getCell("C16").value = lDomicilio;
+          ws.getCell("F16").value = lCargo;
+          ws.getCell("J16").value = lCorreo;
+
+          // Publicidad
+          ws.getCell("C20").value = c["pagina_web"] || "";
+          ws.getCell("J20").value = c["redes_sociales"] || "";
+
+          // Firmas
+          ws.getCell("C57").value = lNombre.toUpperCase();
+          ws.getCell("C58").value = lDNI;
+
+          // Título
+          var tituloActa =
+            "ACTA DE OPERACIÓN DEL CENTRO DE ACCESO DIGITAL (CAD)\n" +
+            "Instalación/Creación de Banda Ancha para la conectividad Integral y Desarrollo social de la Región " +
+            region;
+          ws.getCell("A2").value = tituloActa;
+
+          // Descargar
+          var buffer = await wb.xlsx.writeBuffer();
+          var blob = new Blob([buffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+          var url = URL.createObjectURL(blob);
+          var a = document.createElement("a");
+          a.href = url;
+          var nombreArchivo =
+            "Acta_Operacion_" +
+            (c["ID CAD"] || "CAD").replace(/[^a-zA-Z0-9_-]/g, "_") +
+            ".xlsx";
+          a.download = nombreArchivo;
+          a.click();
+          URL.revokeObjectURL(url);
+
+          showToast("✅ Acta generada: " + nombreArchivo);
+        } catch (err) {
+          showToast("❌ Error generando acta: " + err.message, "err");
+        }
+      };
+
+      // ══════════════════════════════════════════════
+      // ══  MÓDULO REPORTES (coordinador)
+      // ══════════════════════════════════════════════
+
+      let reportesPermisos = [];
+
+      async function verificarPermisosReportes() {
+        try {
+          const { data, error } = await sb
+            .from("Reportes_Permisos")
+            .select("*")
+            .eq("coordinador_id", userProfile.id)
+            .eq("habilitado", true)
+            .eq("tipo_reporte", "reporte_general");
+          if (error) throw error;
+          reportesPermisos = data || [];
+
+          // Mostrar/ocultar nav item de reportes
+          const navReportes = document.getElementById("nav-reportes");
+          if (navReportes) {
+            navReportes.style.display =
+              reportesPermisos.length > 0 ? "flex" : "none";
+          }
+          // Mostrar/ocultar separador
+          const sepReportes = document.getElementById("sep-reportes");
+          if (sepReportes) {
+            sepReportes.style.display =
+              reportesPermisos.length > 0 ? "block" : "none";
+          }
+        } catch (e) {
+          console.error("Error verificando permisos reportes:", e);
+          reportesPermisos = [];
+        }
+      }
+
+      async function cargarReportesCoord() {
+        const msgEl = document.getElementById("reportes-msg");
+        const gridWrapper = document.getElementById("reportes-regiones");
+        const gridEl = document.getElementById("reportes-region-grid");
+
+        if (!msgEl || !gridWrapper || !gridEl) return;
+
+        if (!reportesPermisos.length) {
+          msgEl.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;stroke:#cbd5e1;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <div style="font-size:14px;font-weight:600;color:#64748b;margin-bottom:6px;">Sin permisos de reportes</div>
+            <div style="font-size:13px;">El administrador no ha habilitado reportes para tu cuenta.</div>`;
+          msgEl.style.display = "block";
+          gridWrapper.style.display = "none";
+          return;
+        }
+
+        msgEl.style.display = "none";
+        gridWrapper.style.display = "block";
+
+        const regionColors = {
+          AREQUIPA: { bg: "#e6f1fb", color: "#0c447c", icon: "🏔️" },
+          "SAN MARTIN": { bg: "#e1f5ee", color: "#085041", icon: "🌿" },
+          "LA LIBERTAD": { bg: "#faeeda", color: "#633806", icon: "☀️" },
+          ANCASH: { bg: "#eeedfe", color: "#3c3489", icon: "⛰️" },
+        };
+
+        gridEl.innerHTML = reportesPermisos
+          .map((p) => {
+            const rc = regionColors[p.region] || {
+              bg: "#f0f2f5",
+              color: "#888",
+              icon: "📊",
+            };
+            return `
+            <div class="reporte-region-card" style="cursor:default;">
+              <div class="reporte-region-icon" style="background:${rc.bg};color:${rc.color};">${rc.icon}</div>
+              <div class="reporte-region-info">
+                <div class="reporte-region-nombre">${p.region}</div>
+                <div class="reporte-region-sub">Reporte General</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <input type="month" id="mes-reporte-${p.region.replace(/\s/g, "_")}" style="padding:6px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:12px;font-family:'DM Sans','Aptos Narrow',sans-serif;color:#333;outline:none;" />
+                <button onclick="generarReporteExcel('${p.region}')" style="padding:8px 16px;background:#0d1b2e;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;display:flex;align-items:center;gap:6px;transition:background 0.15s;" onmouseover="this.style.background='#1a3a6b'" onmouseout="this.style.background='#0d1b2e'">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Descargar
+                </button>
+              </div>
+            </div>`;
+          })
+          .join("");
+
+        // Setear mes actual por defecto
+        const ahora = new Date();
+        const mesActual =
+          ahora.getFullYear() +
+          "-" +
+          String(ahora.getMonth() + 1).padStart(2, "0");
+        reportesPermisos.forEach((p) => {
+          const input = document.getElementById(
+            "mes-reporte-" + p.region.replace(/\s/g, "_"),
+          );
+          if (input) input.value = mesActual;
+        });
+      }
+
+      window.generarReporteExcel = async function (region) {
+        const mesInput = document.getElementById(
+          "mes-reporte-" + region.replace(/\s/g, "_"),
+        );
+        if (!mesInput || !mesInput.value) {
+          showToast("⚠️ Selecciona un mes", "err");
+          return;
+        }
+
+        const [anio, mes] = mesInput.value.split("-");
+        const mesNum = parseInt(mes);
+        const meses = [
+          "",
+          "Enero",
+          "Febrero",
+          "Marzo",
+          "Abril",
+          "Mayo",
+          "Junio",
+          "Julio",
+          "Agosto",
+          "Septiembre",
+          "Octubre",
+          "Noviembre",
+          "Diciembre",
+        ];
+        const mesNombre = meses[mesNum];
+        const inicioMes = `${anio}-${mes}-01`;
+        const finMes =
+          mesNum === 12
+            ? `${parseInt(anio) + 1}-01-01`
+            : `${anio}-${String(mesNum + 1).padStart(2, "0")}-01`;
+
+        showToast(
+          "📊 Generando reporte de " +
+            region +
+            " — " +
+            mesNombre +
+            " " +
+            anio +
+            "...",
+        );
+
+        try {
+          // 1. Obtener CADs de la región
+          const { data: cads, error: cErr } = await sb
+            .from("Lista_CADs")
+            .select('"ID CAD"')
+            .eq("REGION", region)
+            .order("ID CAD");
+          if (cErr) throw cErr;
+          const cadIds = (cads || []).map((c) => c["ID CAD"]);
+
+          if (!cadIds.length) {
+            showToast("⚠️ No hay CADs en " + region, "err");
+            return;
+          }
+
+          // 2. Obtener visitantes del mes con datos de asistentes
+          let allVisitas = [];
+          for (let i = 0; i < cadIds.length; i += 50) {
+            const batch = cadIds.slice(i, i + 50);
+            const { data: visitas, error: vErr } = await sb
+              .from("Visitantes")
+              .select(
+                "cad_id, fecha_visita, hora_entrada, duracion_min, servicio, Asistentes!inner(nombres, apellidos, edad, genero, discapacidad, celular, dni, profesion_oficio)",
+              )
+              .in("cad_id", batch)
+              .gte("fecha_visita", inicioMes)
+              .lt("fecha_visita", finMes)
+              .order("cad_id")
+              .order("fecha_visita");
+            if (vErr) throw vErr;
+            allVisitas = allVisitas.concat(visitas || []);
+          }
+
+          // Ordenar: por CAD, luego por fecha
+          allVisitas.sort((a, b) => {
+            if (a.cad_id < b.cad_id) return -1;
+            if (a.cad_id > b.cad_id) return 1;
+            if (a.fecha_visita < b.fecha_visita) return -1;
+            if (a.fecha_visita > b.fecha_visita) return 1;
+            return 0;
+          });
+
+          // 3. Cargar ExcelJS desde CDN
+          if (!window.ExcelJS) {
+            await new Promise((resolve, reject) => {
+              const s = document.createElement("script");
+              s.src =
+                "https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js";
+              s.onload = resolve;
+              s.onerror = reject;
+              document.head.appendChild(s);
+            });
+          }
+
+          const wb = new ExcelJS.Workbook();
+
+          // ── Estilos comunes ──
+          const headerFill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: "FFFFC000" },
+          };
+          const thinBorder = {
+            top: { style: "thin" },
+            left: { style: "thin" },
+            bottom: { style: "thin" },
+            right: { style: "thin" },
+          };
+          const fontNormal = { name: "Aptos Narrow", size: 11 };
+          const fontHeader = { name: "Aptos Narrow", size: 11, bold: true };
+          const fontTitulo = { name: "Aptos Narrow", size: 14, bold: true };
+          const fontTituloGrande = {
+            name: "Aptos Narrow",
+            size: 24,
+            bold: true,
+          };
+          const fontHeaderUsuarios = {
+            name: "Aptos Narrow",
+            size: 14,
+            bold: true,
+          };
+          const centerAlign = {
+            horizontal: "center",
+            vertical: "middle",
+            wrapText: true,
+          };
+
+          // ══════════════════════════════════════
+          // ══ PESTAÑA 1: CADs
+          // ══════════════════════════════════════
+          const wsCads = wb.addWorksheet("CADs");
+
+          // Anchos
+          wsCads.getColumn(1).width = 5;
+          wsCads.getColumn(2).width = 11;
+          wsCads.getColumn(3).width = 45;
+
+          // Fila 1: vacía
+          // Fila 2: Título
+          wsCads.mergeCells("A2:C2");
+          const tituloCAD = wsCads.getCell("A2");
+          tituloCAD.value =
+            "Relación de Centros de Acceso Digital de la Región de " + region;
+          tituloCAD.font = fontTitulo;
+          tituloCAD.alignment = { vertical: "middle" };
+          wsCads.getRow(2).height = 19;
+
+          // Fila 3: vacía
+          // Fila 4: Headers
+          const hdrCAD = ["", "N°", "Nombre del Centro de Acceso Digital"];
+          const row4 = wsCads.getRow(4);
+          hdrCAD.forEach((val, ci) => {
+            const cell = row4.getCell(ci + 1);
+            cell.value = val;
+            if (ci >= 1) {
+              cell.font = fontHeader;
+              cell.fill = headerFill;
+              cell.border = thinBorder;
+              cell.alignment = centerAlign;
+            }
+          });
+
+          // Filas de datos
+          cadIds.forEach((id, idx) => {
+            const r = wsCads.getRow(5 + idx);
+            r.getCell(2).value = idx + 1;
+            r.getCell(2).font = fontNormal;
+            r.getCell(2).border = thinBorder;
+            r.getCell(2).alignment = {
+              horizontal: "center",
+              vertical: "middle",
+            };
+            r.getCell(3).value = id;
+            r.getCell(3).font = fontNormal;
+            r.getCell(3).border = thinBorder;
+          });
+
+          // ══════════════════════════════════════
+          // ══ PESTAÑA 2: Relación de usuarios
+          // ══════════════════════════════════════
+          const wsUsers = wb.addWorksheet("Relación de usuarios");
+
+          // Anchos (replicando plantilla)
+          const colWidths = [7, 36, 12, 35, 8, 11, 16, 14, 14, 14, 18];
+          colWidths.forEach((w, i) => {
+            wsUsers.getColumn(i + 1).width = w;
+          });
+
+          // Fila 1: vacía
+          // Fila 2: Título grande
+          wsUsers.mergeCells("A2:K2");
+          const tituloUsers = wsUsers.getCell("A2");
+          tituloUsers.value =
+            "LISTA DE USUARIOS DEL SERVICIO DE INTERNET - " +
+            region +
+            " - " +
+            mesNombre.toUpperCase() +
+            " " +
+            anio;
+          tituloUsers.font = fontTituloGrande;
+          tituloUsers.alignment = centerAlign;
+          wsUsers.getRow(2).height = 30;
+
+          // Fila 3: vacía
+          // Fila 4: Headers
+          const headers = [
+            "Item",
+            "Nombre del CAD",
+            "Fecha",
+            "Nombre Completo",
+            "Edad",
+            "Género",
+            "Discapacidad",
+            "Tiempo de Uso (min)",
+            "Teléfono",
+            "DNI",
+            "Cargo\n/Profesión",
+          ];
+          const row4u = wsUsers.getRow(4);
+          row4u.height = 45;
+          headers.forEach((val, ci) => {
+            const cell = row4u.getCell(ci + 1);
+            cell.value = val;
+            cell.font = fontHeaderUsuarios;
+            cell.fill = headerFill;
+            cell.border = thinBorder;
+            cell.alignment = centerAlign;
+          });
+
+          // Filas de datos
+          allVisitas.forEach((v, idx) => {
+            const a = v.Asistentes || {};
+            const fechaFmt = v.fecha_visita
+              ? v.fecha_visita.split("-").reverse().join("/")
+              : "";
+            const nombreCompleto = (
+              (a.nombres || "") +
+              " " +
+              (a.apellidos || "")
+            ).trim();
+            const discap = a.discapacidad ? "SI" : "NO";
+            const celular = a.celular || "No Tiene";
+            const duracion = v.duracion_min || "";
+
+            const rowData = [
+              idx + 1,
+              v.cad_id || "",
+              fechaFmt,
+              nombreCompleto,
+              a.edad || "",
+              a.genero || "",
+              discap,
+              duracion,
+              celular,
+              a.dni || "",
+              a.profesion_oficio || "",
+            ];
+
+            const r = wsUsers.getRow(5 + idx);
+            rowData.forEach((val, ci) => {
+              const cell = r.getCell(ci + 1);
+              cell.value = val;
+              cell.font = fontNormal;
+              cell.border = thinBorder;
+              if (ci === 0 || ci === 4) {
+                cell.alignment = { horizontal: "center", vertical: "middle" };
+              }
+            });
+          });
+
+          // 4. Descargar
+          const buffer = await wb.xlsx.writeBuffer();
+          const blob = new Blob([buffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `Listado_Personas_Internet_${mesNombre}_${anio}_${region.replace(/\s/g, "_")}.xlsx`;
+          link.click();
+          URL.revokeObjectURL(url);
+
+          showToast(
+            "✅ Reporte descargado: " + allVisitas.length + " registros",
+          );
+        } catch (e) {
+          console.error("Error generando reporte:", e);
+          showToast("❌ Error: " + e.message, "err");
+        }
+      };
+    </script>
+
+    <style>
+      .reportes-region-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .reporte-region-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 18px 20px;
+        background: white;
+        border: 1.5px solid #eef0f3;
+        border-radius: 12px;
+        transition: all 0.2s;
+      }
+      .reporte-region-card:hover {
+        border-color: #29aae1;
+        box-shadow: 0 4px 16px rgba(41, 170, 225, 0.1);
+        transform: translateY(-1px);
+      }
+      .reporte-region-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .reporte-region-info {
+        flex: 1;
+      }
+      .reporte-region-nombre {
+        font-size: 15px;
+        font-weight: 700;
+        color: #0d1b2e;
+      }
+      .reporte-region-sub {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 2px;
+      }
+    </style>
+
+    <!-- ━━━ ROTACIÓN DE COLORES SIDEBAR (Propuesta 3) ━━━ -->
+    <script>
+      (function () {
+        var colors = ["#071e30", "#8a0a50", "#b38600", "#6a8a2a", "#006d9e"];
+        var idx = 0;
+        var sidebar = document.getElementById("sidebar");
+        function cambiarColorSidebar() {
+          idx = (idx + 1) % colors.length;
+          sidebar.style.backgroundColor = colors[idx];
+          for (var i = 0; i < 5; i++) {
+            var dot = document.getElementById("dot" + i);
+            if (i === idx) {
+              dot.classList.add("active");
+            } else {
+              dot.classList.remove("active");
+            }
+          }
+        }
+        setInterval(cambiarColorSidebar, 15000);
+      })();
+    </script>
+  </body>
+</html>
