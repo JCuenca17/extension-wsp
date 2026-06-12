@@ -1,29 +1,73 @@
 /**
  * ============================================================================
  * PROYECTO: YOFC INJECTOR - MÓDULO DE LÓGICA (CORE)
- * VERSIÓN: V4.0 (Inyector Multi-Archivo 4x / UI Minimalista)
- * * DESARROLLADO POR: JOSE LUIS CUENCA GUTIERREZ
+ * VERSIÓN: V10.0 (Flat Corporate & Safe Injection)
  * ============================================================================
  */
 
-if (
-  window.location.href.includes("fms.yofc.com.pe") ||
-  document.title.includes("YOFC CAD")
-) {
-  window.YOFC_THEME = {
-    bgMain: "#f8fafc",
-    bgCard: "#ffffff",
-    border: "#e2e8f0",
-    textPri: "#1e293b",
-    textSec: "#64748b",
-    yofcBlue: "#009CDE",
-    yofcMagenta: "#CE0F69",
-    hover: "#f1f5f9",
+if (window.location.href.includes("yofc") || document.title.includes("YOFC")) {
+  window.getTodayStr = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   };
 
-  // ==========================================
-  // LÓGICA DEL INYECTOR FOTOGRÁFICO (HASTA 4 FOTOS)
-  // ==========================================
+  window.getDailyTracker = async () => {
+    const dateKey = `yofc_tracker_v10_${window.getTodayStr()}`;
+    const data = await chrome.storage.local.get(dateKey);
+    if (data[dateKey]) return data[dateKey];
+    const newTracker = {
+      timer: {
+        activeActivity: null,
+        isRunning: false,
+        startTime: null,
+        activities: {
+          "Llamar a encargados/autoridades CADs": {
+            elapsedSecs: 0,
+            count: 0,
+            comentario: "",
+          },
+          "Llamar a encargados CAUs": {
+            elapsedSecs: 0,
+            count: 0,
+            comentario: "",
+          },
+          "Actualizar usuarios en el sistema": {
+            elapsedSecs: 0,
+            count: 0,
+            comentario: "",
+          },
+          "Reuniones, capacitaciones y asesorías": {
+            elapsedSecs: 0,
+            count: 0,
+            comentario: "",
+          },
+          "Actualizar perfiles de Facebook": {
+            elapsedSecs: 0,
+            count: 0,
+            comentario: "",
+          },
+          "Elaboración de reportes": {
+            elapsedSecs: 0,
+            count: 0,
+            comentario: "",
+          },
+          "Elaboración de presentaciones": {
+            elapsedSecs: 0,
+            count: 0,
+            comentario: "",
+          },
+        },
+      },
+    };
+    await chrome.storage.local.set({ [dateKey]: newTracker });
+    return newTracker;
+  };
+
+  window.saveDailyTracker = async (trackerData) => {
+    const dateKey = `yofc_tracker_v10_${window.getTodayStr()}`;
+    await chrome.storage.local.set({ [dateKey]: trackerData });
+  };
+
   window.actualizarInterfazInyector = async () => {
     try {
       const data = await chrome.storage.local.get("yofc_bridge_data");
@@ -36,14 +80,13 @@ if (
       container.innerHTML = "";
 
       if (fotos.length === 0) {
-        container.innerHTML = `<div style='color:${window.YOFC_THEME.textSec}; font-style:italic; font-size:12px;'>Memoria de caché vacía.</div>`;
+        container.innerHTML =
+          "<div style='color:#64748b; font-style:italic; font-size:12px; text-align:center; padding:20px 0; font-weight:700;'>MEMORIA DE CACHÉ VACÍA</div>";
         if (btn) btn.style.display = "none";
-        if (contextInfo)
-          contextInfo.innerText = "A la espera de datos desde el origen.";
+        if (contextInfo) contextInfo.innerHTML = "ESPERANDO DATOS DE WHATSAPP";
         return;
       }
 
-      // Contar cuántas fotos tiene cada CAD en caché
       const conteo = {};
       fotos.forEach((f) => {
         const name = f.autor.split("\n")[0].trim();
@@ -52,29 +95,28 @@ if (
 
       for (const [cad, cant] of Object.entries(conteo)) {
         const item = document.createElement("div");
-        item.style.cssText = `display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid ${window.YOFC_THEME.border}; font-size:12px;`;
-        item.innerHTML = `<span style="color:${window.YOFC_THEME.textPri}; font-weight:500;">${cad}</span><span style="color:${window.YOFC_THEME.yofcBlue}; font-weight:bold;">[ ${cant} ]</span>`;
+        item.className = "yofc-cache-item";
+        item.innerHTML = `<span style="color:#1e293b;">${cad}</span><span class="yofc-badge">${cant}</span>`;
         container.appendChild(item);
       }
 
-      // Identificar si estamos dentro de un CAD específico en la plataforma
       const tituloEl = document.getElementById("ops-detalle-titulo");
       const cadActual = tituloEl ? tituloEl.innerText.trim() : null;
 
       if (cadActual && conteo[cadActual]) {
         const cantidadInyectar = Math.min(conteo[cadActual], 4);
         if (contextInfo)
-          contextInfo.innerHTML = `Entorno identificado:<br><b style="color:${window.YOFC_THEME.textPri};">${cadActual}</b><br><br>Registros pendientes: ${conteo[cadActual]}`;
+          contextInfo.innerHTML = `CAD EN PANTALLA:<br><strong style="color:#009CDE; font-size:14px; display:block; margin:6px 0;">${cadActual}</strong>COLA DE ESPERA: ${conteo[cadActual]} FOTOS`;
         if (btn) {
           btn.style.display = "flex";
-          btn.innerText = `INYECTAR ${cantidadInyectar} FOTO(S)`;
+          btn.innerHTML = `INYECTAR ${cantidadInyectar} FOTO(S)`;
           btn.onclick = () => window.ejecutarInyeccionMulti(cadActual);
         }
       } else {
         if (contextInfo)
           contextInfo.innerHTML = cadActual
-            ? `<span style="color:${window.YOFC_THEME.yofcMagenta};">El CAD [${cadActual}] no posee registros en la caché.</span>`
-            : "Navegue a un CAD activo para habilitar la inyección.";
+            ? `<span style="color:#CE0F69; font-weight:800;">EL CAD [${cadActual}] NO ESTÁ EN CACHÉ.</span>`
+            : "NAVEGA A UN CAD ACTIVO";
         if (btn) btn.style.display = "none";
       }
     } catch (e) {}
@@ -84,11 +126,9 @@ if (
     try {
       const data = await chrome.storage.local.get("yofc_bridge_data");
       let fotos = data.yofc_bridge_data || [];
-
       const inputFiles = document.getElementById("o-ap-fotos-input");
       if (!inputFiles) return;
 
-      // Extraer un máximo de 4 fotos para el CAD actual
       let indicesAEliminar = [];
       let fotosAInyectar = [];
 
@@ -96,27 +136,23 @@ if (
         if (fotos[i].autor.split("\n")[0].trim() === cadActual) {
           indicesAEliminar.push(i);
           fotosAInyectar.push(fotos[i]);
-          if (fotosAInyectar.length === 4) break; // Tope de 4 archivos
+          if (fotosAInyectar.length === 4) break;
         }
       }
 
       if (fotosAInyectar.length === 0) return;
 
-      // Cambiamos el texto del botón temporalmente para que veas que está trabajando
       const btn = document.getElementById("btn-inject-unit");
       if (btn) {
-        btn.innerText = "PROCESANDO...";
-        btn.style.background = "#f59e0b"; // Naranja
+        btn.innerHTML = `PROCESANDO...`;
+        btn.style.background = "#f59e0b";
         btn.style.pointerEvents = "none";
       }
 
       const dataTransfer = new DataTransfer();
-
-      // Descargar los blobs de las 4 fotos simultáneamente
       const fetchPromises = fotosAInyectar.map(async (fotoObj, idx) => {
         const res = await fetch(fotoObj.imagen);
         const blob = await res.blob();
-        // Se le asigna un nombre secuencial a cada foto
         const file = new File([blob], `evidencia_${cadActual}_${idx + 1}.jpg`, {
           type: "image/jpeg",
         });
@@ -124,12 +160,9 @@ if (
       });
 
       await Promise.all(fetchPromises);
-
-      // Inyectar el paquete completo al input de la plataforma
       inputFiles.files = dataTransfer.files;
       inputFiles.dispatchEvent(new Event("change", { bubbles: true }));
 
-      // Eliminar de la memoria solo las fotos que se inyectaron (de atrás hacia adelante para no romper los índices)
       for (let i = indicesAEliminar.length - 1; i >= 0; i--) {
         fotos.splice(indicesAEliminar[i], 1);
       }
@@ -137,18 +170,16 @@ if (
       await chrome.storage.local.set({ yofc_bridge_data: fotos });
 
       if (btn) {
-        btn.innerText = "[ OK ] INYECTADO";
-        btn.style.background = "#10b981"; // Verde
+        btn.innerHTML = `[ OK ] ENVIADO`;
+        btn.style.background = "#10b981";
         setTimeout(() => {
           window.actualizarInterfazInyector();
           btn.style.pointerEvents = "auto";
-          btn.style.background = window.YOFC_THEME.yofcBlue;
+          btn.style.background = "";
         }, 1500);
-      } else {
-        window.actualizarInterfazInyector();
       }
     } catch (e) {
-      console.error("Error inyectando fotos:", e);
+      console.error(e);
     }
   };
 }

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "YOFC Injector",
-  "version": "4.0",
-  "description": "Sistema de extracción e inyección de datos para YOFC.",
+  "name": "Yofc injector",
+  "version": "10.0",
+  "description": "Sistema Flat Corporate de extracción e inyección.",
   "icons": {
     "16": "icon.png",
     "48": "icon.png",
@@ -11,25 +11,20 @@
   "action": {
     "default_icon": "icon.png"
   },
-  "permissions": ["storage"],
+  "permissions": ["storage", "unlimitedStorage"],
   "host_permissions": [
-    "https://web.whatsapp.com/*",
-    "*://fms.yofc.com.pe/*"
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": ["yofc_ram_reader.js"],
-      "matches": ["*://fms.yofc.com.pe/*"]
-    }
+    "<all_urls>"
   ],
   "content_scripts": [
     {
       "matches": ["https://web.whatsapp.com/*"],
-      "js": ["whatsapp_capture.js"]
+      "js": ["whatsapp_capture.js"],
+      "all_frames": true
     },
     {
-      "matches": ["*://fms.yofc.com.pe/*"],
-      "js": ["yofc_logic.js", "yofc_ui.js"]
+      "matches": ["<all_urls>"],
+      "js": ["yofc_logic.js", "yofc_ui.js"],
+      "all_frames": true
     }
   ]
 }
